@@ -1,0 +1,4 @@
+/Socail_Media :- used For Storing All the Scrapped Social Media Data, All the Social Media Scrappers and Making NLP Models.
+----/data :- Store Raw and Processed Data Scrapped from the Social Media Paltforms
+----/Scrapper :- Python codes (Scrappers) to Scrape the Data
+
