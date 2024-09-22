@@ -1,4 +1,10 @@
-/Socail_Media :- used For Storing All the Scrapped Social Media Data, All the Social Media Scrappers and Making NLP Models.
+/Data-Analysis :- All AI or ML or NLP Models used in the Projects
 ----/data :- Store Raw and Processed Data Scrapped from the Social Media Paltforms
 ----/Scrapper :- Python codes (Scrappers) to Scrape the Data
 
+/FrontEnd :- React JS Website code
+/Mobile_App :- React Native or Flutter Application
+
+/Backend :- Backend Code for handling Requests from Website and Mobile Applications
+
+/
