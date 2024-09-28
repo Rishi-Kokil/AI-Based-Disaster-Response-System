@@ -1,8 +1,10 @@
-// Load environment variables from .env file
 import dotenv from 'dotenv';
 import express from 'express';
 import ee from '@google/earthengine';
-import privateKey from './ee-rishikokil-eb013fb59d0f.json' assert { type: 'json' }; // Adjust the path as necessary
+import fs from 'fs';
+import path from 'path';
+import cors from 'cors';
+
 
 dotenv.config({ path: '../../.env' }); // Adjust the path relative to your script location
 
@@ -10,7 +12,11 @@ const app = express();
 const port = 5000;
 
 // Middleware to handle JSON requests
+app.use(cors());
 app.use(express.json());
+
+// Load private key using fs.readFileSync
+const privateKey = JSON.parse(fs.readFileSync(path.resolve('./ee-rishikokil-eb013fb59d0f.json'), 'utf8'));
 
 // Initialize Earth Engine client
 const initializeEE = () => {
