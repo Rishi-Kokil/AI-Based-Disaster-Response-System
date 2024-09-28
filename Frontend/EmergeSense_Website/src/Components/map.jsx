@@ -1,34 +1,50 @@
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
-// Fix marker icon not displaying in React
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-});
-
 const MapComponent = () => {
-  useEffect(() => {
-    // Optional: Perform any additional setup on component mount
+  const [mapData, setMapData] = useState(null);
+  useEffect
+  useEffect(() => { 
+    const fetchMapData = async () => {
+      try {
+        // Fetch map data from your backend API
+        const response = await fetch('http://localhost:5000/flood-mapping');
+        
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+  
+        const data = await response.json();
+        console.log(data);
+        setMapData(data);
+        
+      } catch (err) {
+        console.error('Error fetching map data:', err);
+      }
+    };
+  
+
+    fetchMapData();
   }, []);
+  
 
   return (
-    <div style={{ height: "100vh", width: "100%" }}>
-      <MapContainer center={[19.047321, 73.069908]} zoom={12} style={{ height: "100%", width: "100%" }}>
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-        />
-        <Marker position={[19.047321, 73.069908]}>
-          <Popup>A pretty CSS3 popup.<br /> Easily customizable.</Popup>
-        </Marker>
-      </MapContainer>
+    <div>
+      {mapData ? (
+        <MapContainer center={[-6.2088, 106.8456]} zoom={10} style={{ height: '500px', width: '100%' }}>
+          <TileLayer
+            url={mapData.urlFormat}
+            attribution="&copy; <a href=&quot;https://earthengine.google.com/&quot;>Google Earth Engine</a> contributors"
+          />
+        </MapContainer>
+      ) : (
+        <p>Loading map...</p>
+      )}
     </div>
   );
 };
 
 export default MapComponent;
+
