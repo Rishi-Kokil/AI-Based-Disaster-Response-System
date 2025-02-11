@@ -1,0 +1,7 @@
+version: '2.32.4'
+services:
+  web:
+  backend:
+  redis:
+  mongodb:
+  rabbitmq:
