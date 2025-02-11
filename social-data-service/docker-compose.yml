@@ -1,0 +1,56 @@
+version: '3'
+networks:
+  app_network:  # Define a custom bridge network
+    driver: bridge
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management 
+    ports:
+      - "5672:5672"   # AMQP
+      - "15672:15672" # Management UI
+    networks:
+      - app_network  # Attach RabbitMQ to the network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:15672"]
+      interval: 10s
+      retries: 5
+      start_period: 20s
+
+  x_fetcher:
+    build: ./X_fetcher
+    ports:
+      - "5000:5000"  # Fixed syntax
+    env_file:
+      - .env
+    networks:
+      - app_network  # Attach x_fetcher to the network
+    depends_on:
+      rabbitmq:
+        condition: service_healthy  # Ensures RabbitMQ is ready before starting
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  # preprocessing:
+  #   build: ./preprocessing
+  #   command: celery -A tasks worker --loglevel=info -Q preprocess_queue
+  #   env_file:
+  #     - .env
+  #   networks:
+  #     - app_network
+  #   depends_on:
+  #     - rabbitmq
+
+  # llm_worker:
+  #   build: ./llm_service
+  #   command: celery -A tasks worker --loglevel=info -Q llm_queue
+  #   env_file:
+  #     - .env
+  #   networks:
+  #     - app_network
+  #   depends_on:
+  #     - rabbitmq
