@@ -7,3 +7,8 @@
 /social-data-service/venv 
 /social-data-service/X_fetcher/venv
 /social-data-service/.env 
+backend/.env
+backend/flask server/venv
+backend/node_modules
+backend/flask server/moondream_model
+backend/privateKey.json
