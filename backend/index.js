@@ -14,42 +14,73 @@ const server = app.listen(port, '0.0.0.0', () => {
     console.log(`App running on port ${port}`);
 });
 
-// Set up WebSocket server
-const wss = new WebSocketServer({ server, perMessageDeflate: false });
-
-wss.on('connection', (ws, req) => {
-    console.log('New client connected:', req.socket.remoteAddress);
-});
+// WebSocket Server
+const wss = new WebSocketServer({ server });
 
 wss.on('connection', (ws) => {
     console.log('Client connected');
 
-    ws.on('message', async (message) => {
-        const data = JSON.parse(message);
-        const { crewId, latitude, longitude, status } = data;
-
-        console.log(`Received data: Crew ID: ${crewId}, Latitude: ${latitude}, Longitude: ${longitude}, Status: ${status}`);
-
-        // Update or create crew location in the database
-        // await CrewLocation.findOneAndUpdate(
-        //     { crewId },
-        //     { latitude, longitude, status, timestamp: new Date() },
-        //     { upsert: true, new: true }
-        // );
-
-        // Broadcast updated location to all connected clients
-        wss.clients.forEach((client) => {
-            if (client.readyState === WebSocket.OPEN) {
-                client.send(JSON.stringify(data));
-            }
-        });
-    });
-
     ws.on('close', () => {
         console.log('Client disconnected');
     });
-
-    ws.on('error', (error) => {
-        console.log('WebSocket error:', error);
-    });
 });
+
+// API to send alerts
+app.post('/send', (req, res) => {
+    const { message, lat, long } = req.body;
+
+    if (!message || lat === undefined || long === undefined) {
+        return res.status(400).send({ error: 'Message, lat, and long are required' });
+    }
+
+    console.log(`Alert: ${message}, Location: (${lat}, ${long})`);
+
+    // Broadcast alert to all connected WebSocket clients
+    wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify({ message, lat, long }));
+        }
+    });
+
+    res.status(200).send({ message: 'Alert sent successfully' });
+});
+
+// // Set up WebSocket server
+// const wss = new WebSocketServer({ server, perMessageDeflate: false });
+
+// wss.on('connection', (ws, req) => {
+//     console.log('New client connected:', req.socket.remoteAddress);
+// });
+
+// wss.on('connection', (ws) => {
+//     console.log('Client connected');
+
+//     ws.on('message', async (message) => {
+//         const data = JSON.parse(message);
+//         const { crewId, latitude, longitude, status } = data;
+
+//         console.log(`Received data: Crew ID: ${crewId}, Latitude: ${latitude}, Longitude: ${longitude}, Status: ${status}`);
+
+//         // Update or create crew location in the database
+//         // await CrewLocation.findOneAndUpdate(
+//         //     { crewId },
+//         //     { latitude, longitude, status, timestamp: new Date() },
+//         //     { upsert: true, new: true }
+//         // );
+
+//         // Broadcast updated location to all connected clients
+//         wss.clients.forEach((client) => {
+//             if (client.readyState === WebSocket.OPEN) {
+//                 client.send(JSON.stringify(data));
+//             }
+//         });
+//     });
+
+//     ws.on('close', () => {
+//         console.log('Client disconnected');
+//     });
+
+//     ws.on('error', (error) => {
+//         console.log('WebSocket error:', error);
+//     });
+// });

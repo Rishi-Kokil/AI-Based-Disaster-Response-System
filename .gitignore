@@ -1,3 +1,4 @@
+node_modules/
 /.env
 /Data-Analysis/venv
 /EmergeSense-Website/node_modules
