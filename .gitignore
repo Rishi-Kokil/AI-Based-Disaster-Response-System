@@ -1,3 +1,4 @@
+node_modules/
 /.env
 /Data-Analysis/venv
 /EmergeSense-Website/node_modules
@@ -12,3 +13,4 @@ backend/flask server/venv
 backend/node_modules
 backend/flask server/moondream_model
 backend/privateKey.json
+backend/uploads
