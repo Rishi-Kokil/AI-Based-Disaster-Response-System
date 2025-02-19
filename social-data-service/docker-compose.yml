@@ -35,15 +35,15 @@ services:
       retries: 3
       start_period: 20s
 
-  # preprocessing:
-  #   build: ./preprocessing
-  #   command: celery -A tasks worker --loglevel=info -Q preprocess_queue
-  #   env_file:
-  #     - .env
-  #   networks:
-  #     - app_network
-  #   depends_on:
-  #     - rabbitmq
+  preprocessing:
+    build: ./preprocessing
+    command: celery -A preprocessing_worker worker --loglevel=info -Q tweet.raw
+    env_file:
+      - .env
+    networks:
+      - app_network
+    depends_on:
+      - rabbitmq
 
   # llm_worker:
   #   build: ./llm_service
