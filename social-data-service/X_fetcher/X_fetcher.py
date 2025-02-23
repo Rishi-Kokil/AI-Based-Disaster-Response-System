@@ -5,11 +5,11 @@ import os
 from datetime import datetime
 from dotenv import load_dotenv
 from celery import Celery
-import pika
+from kombu import Connection, Exchange, Queue, Producer
 from X_token_manager import TokenManager, load_tokens_from_env
-
 import logging
 
+# Logging configuration
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
@@ -19,6 +19,7 @@ logging.basicConfig(
     ]
 )
 
+# Load environment variables
 load_dotenv()
 
 # Celery Worker setup
@@ -27,106 +28,126 @@ app = Celery('twitter_worker',
              backend='rpc://')
 
 # RabbitMQ setup
-RABBITMQ_HOST = os.getenv("RABBITMQ_HOST", "rabbitmq") 
+RABBITMQ_HOST = os.getenv("RABBITMQ_HOST", "rabbitmq")
 EXCHANGE_NAME = "disaster_data"
-EXCHANGE_TYPE = "topic" 
+EXCHANGE_TYPE = "topic"
 
+# Define RabbitMQ exchange and queues
+disaster_exchange = Exchange(EXCHANGE_NAME, type=EXCHANGE_TYPE, durable=True)
+raw_tweet_queue = Queue('tweet.raw', exchange=disaster_exchange, routing_key='tweet.raw', durable=True)
+media_queue = Queue('tweet.media', exchange=disaster_exchange, routing_key='tweet.media', durable=True)
+comment_queue = Queue('tweet.comment', exchange=disaster_exchange, routing_key='tweet.comment', durable=True)
 
-logging.info(f" Environement Variables Pulled Successfully - {RABBITMQ_HOST}")
+logging.info(f"Environment Variables Pulled Successfully - {RABBITMQ_HOST}")
 
-
+# Load tokens and initialize token manager
 tokens = load_tokens_from_env()
 token_manager = TokenManager(tokens)
 
-class RabbitMQProducer:
-    def __init__(self):
-        self.connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host=RABBITMQ_HOST)
-        )
-        self.channel = self.connection.channel()
-        self.channel.exchange_declare(
-            exchange=EXCHANGE_NAME,
-            exchange_type=EXCHANGE_TYPE,
-            durable=True
-        )
-        
-    def publish(self, routing_key, data):
-        self.channel.basic_publish(
-            exchange=EXCHANGE_NAME,
-            routing_key=routing_key,
-            body=json.dumps(data),
-            properties=pika.BasicProperties(
-                delivery_mode=2
-            )
-        )
-        
-    def close(self):
-        self.connection.close()
 
 @app.task(name="fetch_disaster_tweets")
 def fetch_disaster_tweets():
-    producer = RabbitMQProducer()
-    current_token = token_manager.get_current_token()
+    """
+    Fetch disaster-related tweets from Twitter API and publish them to RabbitMQ queues.
+    """
+    # Initialize Kombu connection and producer
+    with Connection(f'amqp://guest:guest@{RABBITMQ_HOST}:5672//') as conn:
+        producer = Producer(conn)
 
-    keywords = [
-        "earthquake", "shake", "seismic", "tremor", "flood", "water", "rain", "submerge",
-        "deluge", "storm", "thunderstorm", "hurricane", "tornado", "twister", "fire",
-        "wildfire", "blaze", "flames", "explosion", "crash", "accident", "shooting",
-        "violence", "bomb", "building collapse"
-    ]
+        current_token = token_manager.get_current_token()
+        keywords = [
+            "earthquake", "shake", "seismic", "tremor", "flood", "water", "rain", "submerge",
+            "deluge", "storm", "thunderstorm", "hurricane", "tornado", "twister", "fire",
+            "wildfire", "blaze", "flames", "explosion", "crash", "accident", "shooting",
+            "violence", "bomb", "building collapse"
+        ]
+        exclude_usernames = ["NDRFHQ", "04NDRF"]
+        keywords_query = " OR ".join(keywords)
+        exclude_query = " ".join([f"-from:{user}" for user in exclude_usernames])
+        query = f"({keywords_query}) -is:retweet -is:reply {exclude_query}"
+        tweet_fields = ["id", "author_id", "created_at", "text", "public_metrics", "conversation_id"]
+        expansions = ["author_id", "attachments.media_keys"]
+        media_fields = ["url", "preview_image_url", "type"]
+        user_fields = ["location", "username"]
 
-    exclude_usernames = ["NDRFHQ", "04NDRF"]
+        try:
+            # Attempt to fetch tweets from the Twitter API
+            client = tweepy.Client(bearer_token=current_token)
+            response = client.search_recent_tweets(
+                query=query,
+                max_results=100,
+                tweet_fields=tweet_fields,
+                user_fields=user_fields,
+                expansions=expansions,
+                media_fields=media_fields
+            )
 
-    keywords_query = " OR ".join(keywords)
-    exclude_query = " ".join([f"-from:{user}" for user in exclude_usernames])
-    query = f"({keywords_query}) -is:retweet -is:reply {exclude_query}"
+            if not response.data:
+                logging.info("No tweets found from the Twitter API.")
+                return
 
-    tweet_fields = ["id", "author_id", "created_at", "text", "public_metrics", "conversation_id"]
+            # Process the API response
+            tweets, media, comments = process_response(response)
 
-    expansions = ["author_id", "attachments.media_keys"]
-    media_fields = ["url", "preview_image_url", "type"]
-    user_fields = ["location", "username"]
-    
-    try:
-        client = tweepy.Client(bearer_token=current_token)
-        
-        response = client.search_recent_tweets(
-            query=query,
-            max_results=100,
-            tweet_fields=tweet_fields,
-            user_fields=user_fields,
-            expansions=expansions,
-            media_fields=media_fields
-        )
+            # Publish tweets, media, and comments to respective queues
+            for tweet in tweets:
+                producer.publish(tweet, exchange=disaster_exchange, routing_key='tweet.raw', declare=[raw_tweet_queue])
 
-        if not response.data:
-            print("No tweets found.")
-            return
-        
-        tweets, media, comments = process_response(response)
+            for media_item in media:
+                producer.publish(media_item, exchange=disaster_exchange, routing_key='tweet.media', declare=[media_queue])
 
-        for tweet in tweets:
-            producer.publish("tweet.raw", tweet)    
-        for media_item in media:
-            producer.publish("tweet.media", media_item)
-        for comment in comments:
-            producer.publish("tweet.comment", comment)
-            
-    except tweepy.errors.TooManyRequests as e:
-        print(f"Rate limit hit on token {current_token}")
-        reset_time = int(e.response.headers.get("x-rate-limit-reset", time.time() + 900))
-        token_manager.handle_rate_limit(reset_time)
-        fetch_disaster_tweets.retry(countdown=reset_time - time.time() + 10)
-    except Exception as e:
-        print(f"Error fetching tweets: {str(e)}")
-        fetch_disaster_tweets.retry(countdown=60)
-    finally:
-        producer.close()
+            for comment in comments:
+                producer.publish(comment, exchange=disaster_exchange, routing_key='tweet.comment', declare=[comment_queue])
+
+            logging.info(f"Published {len(tweets)} tweets, {len(media)} media items, and {len(comments)} comments.")
+
+        except Exception as e:
+            logging.error(f"Error fetching tweets from the Twitter API: {str(e)}")
+
+            # Fallback to dummy data
+            try:
+                logging.info("Fetching dummy data from dump.txt as a fallback...")
+                tweets = []
+                media = []
+                comments = []
+
+                with open("dump.txt", "r") as file:
+                    for line in file:
+                        # Parse each line as a JSON object
+                        data = json.loads(line.strip())
+
+                        # Categorize the data based on its structure
+                        if "id" in data and "text" in data:  # Likely a tweet
+                            tweets.append(data)
+                        elif "media_key" in data:  # Likely media
+                            media.append(data)
+                        elif "tweet_id" in data:  # Likely a comment
+                            comments.append(data)
+
+                # Publish tweets, media, and comments to respective queues
+                for tweet in tweets:
+                    producer.publish(tweet, exchange=disaster_exchange, routing_key='tweet.raw', declare=[raw_tweet_queue])
+
+                for media_item in media:
+                    producer.publish(media_item, exchange=disaster_exchange, routing_key='tweet.media', declare=[media_queue])
+
+                for comment in comments:
+                    producer.publish(comment, exchange=disaster_exchange, routing_key='tweet.comment', declare=[comment_queue])
+
+                logging.info(f"Published {len(tweets)} tweets, {len(media)} media items, and {len(comments)} comments from dummy data.")
+
+            except Exception as fallback_error:
+                logging.error(f"Error processing dummy data: {str(fallback_error)}")
+                raise fallback_error  # Re-raise the error to trigger Celery retry
+
 
 def process_response(response):
+    """
+    Process the Twitter API response and extract tweets, media, and comments.
+    """
     tweets_data = []
     media_data = []
-    comments_data = []  
+    comments_data = []
 
     if not response.data:
         return tweets_data, media_data, comments_data
@@ -165,6 +186,5 @@ def process_response(response):
                         "media_type": media.type
                     }
                     media_data.append(media_info)
-
 
     return tweets_data, media_data, comments_data

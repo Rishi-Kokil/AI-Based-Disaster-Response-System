@@ -20,7 +20,7 @@ services:
   x_fetcher:
     build: ./X_fetcher
     ports:
-      - "5000:5000"  # Fixed syntax
+      - "5000:5000" 
     env_file:
       - .env
     networks:
@@ -37,7 +37,6 @@ services:
 
   preprocessing:
     build: ./preprocessing
-    command: celery -A preprocessing_worker worker --loglevel=info -Q tweet.raw
     env_file:
       - .env
     networks:
