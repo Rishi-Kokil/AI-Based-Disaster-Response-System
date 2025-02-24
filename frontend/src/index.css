@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@theme {
+    /* Light Theme */
+    --color-light-primary: oklch(0.35 0.02 270);
+    --color-light-secondary: oklch(0.65 0.03 250);
+    --color-light-tertiary: oklch(0.90 0.01 220);
+    --color-light-text-primary: oklch(0.15 0.02 260);
+    --color-light-text-secondary: oklch(0.40 0.01 250);
+    --color-light-text-tertiary: oklch(0.65 0.01 240);
+    --color-light-text-inverted: oklch(0.98 0.01 260);
+    --color-light-accent: oklch(0.70 0.12 280);
+    --color-light-shadow: oklch(0.15 0.01 260 / 0.1);
+
+    /* Dark Theme */
+    --color-dark-primary: oklch(0.15 0.02 270);
+    --color-dark-secondary: oklch(0.30 0.02 250);
+    --color-dark-tertiary: oklch(0.45 0.01 220);
+    --color-dark-text-primary: oklch(0.90 0.02 260);
+    --color-dark-text-secondary: oklch(0.70 0.01 250);
+    --color-dark-text-tertiary: oklch(0.50 0.01 240);
+    --color-dark-text-inverted: oklch(0.12 0.01 260);
+    --color-dark-accent: oklch(0.75 0.18 280);
+    --color-dark-shadow: oklch(0.98 0.01 260 / 0.15);
+}
+
+
+body {
+    font-family: 'Roboto', sans-serif;
+}
