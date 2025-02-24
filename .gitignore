@@ -1,7 +1,7 @@
 node_modules/
 /.env
 /Data-Analysis/venv
-/EmergeSense-Website/node_modules
+/frontend/node_modules
 /Backend/node_modules
 /backend/GEE_Scripts/ee-rishikokil-eb013fb59d0f.json
 /env
