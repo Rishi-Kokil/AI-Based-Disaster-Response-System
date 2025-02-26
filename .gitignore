@@ -3,7 +3,6 @@ node_modules/
 /Data-Analysis/venv
 /frontend/node_modules
 /Backend/node_modules
-/backend/GEE_Scripts/ee-rishikokil-eb013fb59d0f.json
 /env
 /social-data-service/venv 
 /social-data-service/X_fetcher/venv
@@ -14,3 +13,8 @@ backend/node_modules
 backend/flask server/moondream_model
 backend/privateKey.json
 backend/uploads
+backend/ee-rishikokil-eb013fb59d0f.json
+# Ignore private keys
+*.pem
+*.key
+*.json
