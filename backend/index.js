@@ -15,7 +15,6 @@ const port = process.env.PORT || 3000;
 // Middlewares
 app.use(express.json());
 app.use(cors());
-app.use(compression());
 
 // Proxy
 app.use("/api/proxy", proxyRouter);
@@ -23,7 +22,7 @@ app.use("/api/proxy", proxyRouter);
 // Routes
 app.use('/user', userRouter);
 app.use('/agency', agencyRouter);
-app.use('/agent', adminRouter);
+app.use('/agent', agentRouter);
 
 app.get('/', (req, res) => {
     res.send('Hello world');
