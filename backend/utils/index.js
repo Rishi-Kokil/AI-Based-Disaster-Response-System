@@ -1,4 +1,4 @@
-import {signtoken, verifyToken} from './auth/signtoken';
+import {signToken, verifyToken} from './auth/signtoken';
 import {hashPassword, comparePassword} from './auth/password';
 
 export {
