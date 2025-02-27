@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import { WebSocketServer } from 'ws';
-import compression from 'compression';
 import dotenv from 'dotenv';
 
 import { userRouter, agencyRouter, agentRouter} from './routes/index.js';
