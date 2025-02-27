@@ -6,4 +6,4 @@ export {
     verifyToken,
     hashPassword,
     comparePassword
-};s
+};
