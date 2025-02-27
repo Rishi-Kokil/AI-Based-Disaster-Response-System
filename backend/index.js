@@ -1,11 +1,11 @@
 import express from 'express';
-import userRoutes from './routes/user_routes.js';
-import adminRouter from './routes/admin_routes.js';
 import cors from 'cors';
-import proxyRouter from './proxy/index.js';
 import { WebSocketServer } from 'ws';
 import compression from 'compression';
 import dotenv from 'dotenv';
+
+import { userRouter, agencyRouter, agentRouter} from './routes/index.js';
+import proxyRouter from './proxy/index.js';
 
 dotenv.config();
 
@@ -21,8 +21,9 @@ app.use(compression());
 app.use("/api/proxy", proxyRouter);
 
 // Routes
-app.use('/user', userRoutes);
-app.use('/admin', adminRouter);
+app.use('/user', userRouter);
+app.use('/agency', agencyRouter);
+app.use('/agent', adminRouter);
 
 app.get('/', (req, res) => {
     res.send('Hello world');
