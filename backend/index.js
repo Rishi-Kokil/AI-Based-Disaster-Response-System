@@ -1,31 +1,33 @@
-import app from './app.js';
-import db from './config/db.js';
-import userModel from './model/user_model.js';
-import CrewLocation from './model/response_crew_model.js';
-import { WebSocketServer, WebSocket } from 'ws';
+import express from 'express';
+import userRoutes from './routes/user_routes.js';
+import adminRouter from './routes/admin_routes.js';
+import cors from 'cors';
+import proxyRouter from './proxy/index.js';
+import { WebSocketServer } from 'ws';
+import compression from 'compression';
+import dotenv from 'dotenv';
 
-const port = 3000;
+dotenv.config();
+
+const app = express();
+const port = process.env.PORT || 3000;
+
+// Middlewares
+app.use(express.json());
+app.use(cors());
+app.use(compression());
+
+// Proxy
+app.use("/api/proxy", proxyRouter);
+
+// Routes
+app.use('/user', userRoutes);
+app.use('/admin', adminRouter);
 
 app.get('/', (req, res) => {
     res.send('Hello world');
 });
 
-const server = app.listen(port, '0.0.0.0', () => { 
-    console.log(`App running on port ${port}`);
-});
-
-// WebSocket Server
-const wss = new WebSocketServer({ server });
-
-wss.on('connection', (ws) => {
-    console.log('Client connected');
-
-    ws.on('close', () => {
-        console.log('Client disconnected');
-    });
-});
-
-// API to send alerts
 app.post('/send', (req, res) => {
     const { message, lat, long } = req.body;
 
@@ -35,7 +37,7 @@ app.post('/send', (req, res) => {
 
     console.log(`Alert: ${message}, Location: (${lat}, ${long})`);
 
-    // Broadcast alert to all connected WebSocket clients
+
     wss.clients.forEach((client) => {
         if (client.readyState === WebSocket.OPEN) {
             client.send(JSON.stringify({ message, lat, long }));
@@ -45,42 +47,42 @@ app.post('/send', (req, res) => {
     res.status(200).send({ message: 'Alert sent successfully' });
 });
 
-// // Set up WebSocket server
-// const wss = new WebSocketServer({ server, perMessageDeflate: false });
 
-// wss.on('connection', (ws, req) => {
-//     console.log('New client connected:', req.socket.remoteAddress);
-// });
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send({ error: 'Something went wrong!' });
+});
 
-// wss.on('connection', (ws) => {
-//     console.log('Client connected');
 
-//     ws.on('message', async (message) => {
-//         const data = JSON.parse(message);
-//         const { crewId, latitude, longitude, status } = data;
+const server = app.listen(port, '0.0.0.0', () => { 
+    console.log(`App running on port ${port}`);
+});
 
-//         console.log(`Received data: Crew ID: ${crewId}, Latitude: ${latitude}, Longitude: ${longitude}, Status: ${status}`);
 
-//         // Update or create crew location in the database
-//         // await CrewLocation.findOneAndUpdate(
-//         //     { crewId },
-//         //     { latitude, longitude, status, timestamp: new Date() },
-//         //     { upsert: true, new: true }
-//         // );
+const wss = new WebSocketServer({ server });
 
-//         // Broadcast updated location to all connected clients
-//         wss.clients.forEach((client) => {
-//             if (client.readyState === WebSocket.OPEN) {
-//                 client.send(JSON.stringify(data));
-//             }
-//         });
-//     });
+wss.on('connection', (ws) => {
+    console.log('Client connected');
 
-//     ws.on('close', () => {
-//         console.log('Client disconnected');
-//     });
+    ws.on('message', async (message) => {
+        const data = JSON.parse(message);
+        const { crewId, latitude, longitude, status } = data;
 
-//     ws.on('error', (error) => {
-//         console.log('WebSocket error:', error);
-//     });
-// });
+        console.log(`Received data: Crew ID: ${crewId}, Latitude: ${latitude}, Longitude: ${longitude}, Status: ${status}`);
+
+        // Broadcast updated location to all connected clients
+        wss.clients.forEach((client) => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify(data));
+            }
+        });
+    });
+
+    ws.on('close', () => {
+        console.log('Client disconnected');
+    });
+
+    ws.on('error', (error) => {
+        console.log('WebSocket error:', error);
+    });
+});
