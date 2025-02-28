@@ -37,11 +37,11 @@ app.post('/send', (req, res) => {
     console.log(`Alert: ${message}, Location: (${lat}, ${long})`);
 
 
-    wss.clients.forEach((client) => {
-        if (client.readyState === WebSocket.OPEN) {
-            client.send(JSON.stringify({ message, lat, long }));
-        }
-    });
+    // wss.clients.forEach((client) => {
+    //     if (client.readyState === WebSocket.OPEN) {
+    //         client.send(JSON.stringify({ message, lat, long }));
+    //     }
+    // });
 
     res.status(200).send({ message: 'Alert sent successfully' });
 });
@@ -70,11 +70,11 @@ wss.on('connection', (ws) => {
         console.log(`Received data: Crew ID: ${crewId}, Latitude: ${latitude}, Longitude: ${longitude}, Status: ${status}`);
 
         // Broadcast updated location to all connected clients
-        wss.clients.forEach((client) => {
-            if (client.readyState === WebSocket.OPEN) {
-                client.send(JSON.stringify(data));
-            }
-        });
+        // wss.clients.forEach((client) => {
+        //     if (client.readyState === WebSocket.OPEN) {
+        //         client.send(JSON.stringify(data));
+        //     }
+        // });
     });
 
     ws.on('close', () => {
