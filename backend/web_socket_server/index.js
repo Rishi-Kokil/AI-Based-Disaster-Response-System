@@ -68,6 +68,15 @@ if (cluster.isPrimary) {
             console.log(`Text message sent by ${senderId} in team ${teamId}: ${content}`);
         });
 
+        socket.on('message', async (message) => {
+            const data = JSON.parse(message);
+            const { crewId, latitude, longitude, status } = data;
+    
+            console.log(`Received data: Crew ID: ${crewId}, Latitude: ${latitude}, Longitude: ${longitude}, Status: ${status}`);
+    
+        });
+    
+
         // WebRTC Signaling with Presence Check
         socket.on("call_offer", async ({ teamId, senderId, targetId, offer }) => {
             const targetSocketId = await pubClient.get(`user:${teamId}:${targetId}`);
