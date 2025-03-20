@@ -95,7 +95,71 @@ const agencyController = {
         }
         next();
     },
+    fetchFloodMappingPng: async(req,res)=>{
+        try {
+            const { geometry } = req.body;
+            console.log('Received geometry:', geometry);
+    
+            if (!geometry || !geometry.coords || !Array.isArray(geometry.coords) || geometry.coords.length < 3) {
+                return res.status(400).json({ error: "Invalid geometry provided" });
+            }
+    
+            const { id, coords } = geometry;
+    
+            // Convert input coordinates into an Earth Engine polygon
+            const eeGeometry = ee.Geometry.Polygon([coords.map(coord => [coord.lng, coord.lat])]);
+    
+            // Fetch SAR images before flooding
+            const sarBefore = ee.ImageCollection('COPERNICUS/S1_GRD')
+                .filterDate('2019-12-20', '2019-12-29')
+                .filterBounds(eeGeometry)
+                .filter(ee.Filter.listContains('transmitterReceiverPolarisation', 'VV'))
+                .filter(ee.Filter.eq('instrumentMode', 'IW'))
+                .filter(ee.Filter.eq('orbitProperties_pass', 'ASCENDING'))
+                .select('VV')
+                .map(img => img.focalMean(30, 'square', 'meters').copyProperties(img, img.propertyNames()));
+    
+            // Fetch SAR images after flooding
+            const sarAfter = ee.ImageCollection('COPERNICUS/S1_GRD')
+                .filterDate('2020-01-01', '2020-02-01')
+                .filterBounds(eeGeometry)
+                .filter(ee.Filter.listContains('transmitterReceiverPolarisation', 'VV'))
+                .filter(ee.Filter.eq('instrumentMode', 'IW'))
+                .filter(ee.Filter.eq('orbitProperties_pass', 'ASCENDING'))
+                .select('VV')
+                .map(img => img.focalMean(30, 'square', 'meters').copyProperties(img, img.propertyNames()));
+    
+            // Compute difference image
+            const floodDifference = sarAfter.mosaic().subtract(sarBefore.mosaic());
+    
+            // Normalize values for visualization (optional)
+            const minVal = -3; // Adjust based on SAR intensity change
+            const maxVal = 3;
+            const normalizedFlood = floodDifference.unitScale(minVal, maxVal);
+    
+            // Apply color palette (red for high flood intensity, blue for lower intensity)
+            const floodMap = normalizedFlood.visualize({
+                min: 0,
+                max: 1,
+                palette: ['black', 'blue', 'cyan', 'yellow', 'red']
+            });
+    
+            // Generate a PNG URL of the image
+            const floodMapUrl = floodMap.getThumbURL({
+                region: eeGeometry,
+                dimensions: 1024,
+                format: 'png'
+            });
+    
+            res.json({ id, floodMapUrl });
+    
+        } catch (error) {
+            console.log('Error processing flood mapping:', error);
+            res.status(500).json({ error: 'Error processing flood mapping' });
+        }
+    },
     fetchFloodMapping: async (req, res) => {
+
         try {
             const { geometry } = req.body;
             console.log('Received geometry:', geometry);
