@@ -2,12 +2,10 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
-import e from "express";
 const fileName = fileURLToPath(import.meta.url);
 const dirName = path.dirname(fileName);
 
 dotenv.config({path: path.resolve(dirName, "../.env")});
-
 
 export const connectDB = async () => {
   try {

@@ -1,6 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import { GoogleMap, Marker, Polygon, Polyline, InfoWindow, GroundOverlay, useJsApiLoader } from '@react-google-maps/api';
 import axios from 'axios';
+import ToggleSwitch from './ToggleSwitch';
+import PolygonList from './PolygonList';
+
 
 const initialCenter = { lat: -6.30, lng: 106.80 };
 const GAS_ICON_URL = "https://cdn-icons-png.flaticon.com/512/5193/5193677.png";
@@ -15,64 +18,8 @@ const mapStyles = [
   { featureType: 'road', elementType: 'labels', stylers: [{ visibility: 'on' }] }
 ];
 
-const ToggleSwitch = ({ label, checked, onChange, checkboxClass, labelClass }) => (
-  <div className="flex items-center space-x-2">
-    <input
-      type="checkbox"
-      checked={checked}
-      onChange={onChange}
-      className={`form-checkbox ${checkboxClass}`}
-    />
-    <span className={labelClass}>{label}</span>
-  </div>
-);
 
-const PolygonList = ({ polygons, togglePolygonVisibility, deletePolygon, handlePolygonRequest, handleFetchContourLines }) => (
-  <div className="absolute bottom-0 left-0 m-4 p-4 bg-light-primary dark:bg-dark-primary bg-opacity-80 rounded-lg z-10">
-    <h3 className="text-lg font-bold mb-2 text-light-text-primary dark:text-dark-text-primary">
-      Polygons
-    </h3>
-    {polygons.length === 0 ? (
-      <div className="text-light-text-secondary dark:text-dark-text-secondary">
-        No polygons created yet.
-      </div>
-    ) : (
-      <ul className="space-y-2">
-        {polygons.map((polygon, index) => (
-          <li key={polygon.id} className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              checked={polygon.visible}
-              onChange={() => togglePolygonVisibility(polygon.id)}
-              className="form-checkbox h-5 w-5 text-light-accent dark:text-dark-accent"
-            />
-            <span className="text-light-text-primary dark:text-dark-text-primary">
-              Polygon {index + 1}
-            </span>
-            <button
-              onClick={() => deletePolygon(polygon.id)}
-              className="text-light-accent dark:text-dark-accent ml-2"
-            >
-              Delete
-            </button>
-            <button
-              onClick={() => handlePolygonRequest(polygon)}
-              className="text-light-accent dark:text-dark-accent ml-2"
-            >
-              Request
-            </button>
-            <button
-              onClick={() => handleFetchContourLines(polygon)}
-              className="text-light-accent dark:text-dark-accent ml-2"
-            >
-              Contour Lines
-            </button>
-          </li>
-        ))}
-      </ul>
-    )}
-  </div>
-);
+
 
 function MapContainer() {
   const { isLoaded } = useJsApiLoader({
@@ -151,7 +98,6 @@ function MapContainer() {
     });
   };
 
-  // Render location mappings markers
   const renderLocationMappingsMarkers = () => {
     if (!showLocationMappings) return null;
     return locationMappings.map((location, index) => (

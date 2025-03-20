@@ -1,7 +1,6 @@
 import { lazy } from "react";
 import LazyComponent from "@/components/LazyComponent";
 
-// Lazy-loaded pages
 const Landing = lazy(() => import("./pages/Landing"));
 const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
