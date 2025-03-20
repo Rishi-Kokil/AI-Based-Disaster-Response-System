@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import db from '../config/db.js';
 
 const volunteerSchema = new mongoose.Schema({
     name: {
@@ -28,6 +27,6 @@ const volunteerSchema = new mongoose.Schema({
     }
 });
 
-const Volunteer = db.model('Volunteer', volunteerSchema);
+const Volunteer = mongoose.model('Volunteer', volunteerSchema);
 
 export default Volunteer;

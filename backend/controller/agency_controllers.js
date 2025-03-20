@@ -5,11 +5,11 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import User from '../model/user_model.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const filename = fileURLToPath(import.meta.url);
+const dirname = path.dirname(filename);
 
 
-const privateKeyPath = path.resolve(__dirname, '../privateKey.json');
+const privateKeyPath = path.resolve(dirname, '../privateKey.json');
 console.log('Private key path:', privateKeyPath);
 const privateKey = JSON.parse(fs.readFileSync(privateKeyPath, 'utf-8'));
 let isEEInitialized = false;

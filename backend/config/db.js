@@ -1,23 +1,28 @@
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
+const fileName = fileURLToPath(import.meta.url);
+const dirName = path.dirname(fileName);
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+dotenv.config({path: path.resolve(dirName, "../.env")});
 
-dotenv.config({ path: path.resolve(__dirname, '../.env') }); // Load environment variables from .env file one level up
+let bucket;
 
-const connectionString = process.env.MONGODB_URI;
+export const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.DATABASE_URL);
 
-if (!connectionString) {
-    throw new Error('MONGODB_URI is not defined in the environment variables');
-}
+    // Initialize GridFSBucket
+    bucket = new GridFSBucket(conn.connection.db, {
+      bucketName: "uploads", // You can name the bucket as needed
+    });
+    console.log("GridFSBucket initialized");
 
-const connection = mongoose.createConnection(connectionString).on('open', () => {
-    console.log('Database connected');
-}).on('error', (error) => {
-    console.log('Error', error);
-});
+  } catch (err) {-
+    process.exit(1);
+  }
+};
 
-export default connection;
+// Export the GridFSBucket for use in other parts of your application
+export { bucket };
