@@ -2,7 +2,6 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { ResponseAgent, ResponseAgentProfile } from "../model/index.js";
-import mongoose from 'mongoose';
 import { signToken } from '../utils/index.js';
 import { hashPassword, comparePassword } from '../utils/index.js';
 import fs from 'fs';
