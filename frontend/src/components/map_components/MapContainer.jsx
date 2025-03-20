@@ -27,7 +27,7 @@ const ToggleSwitch = ({ label, checked, onChange, checkboxClass, labelClass }) =
   </div>
 );
 
-const PolygonList = ({ polygons, togglePolygonVisibility, deletePolygon, handlePolygonRequest }) => (
+const PolygonList = ({ polygons, togglePolygonVisibility, deletePolygon, handlePolygonRequest, handleFetchContourLines }) => (
   <div className="absolute bottom-0 left-0 m-4 p-4 bg-light-primary dark:bg-dark-primary bg-opacity-80 rounded-lg z-10">
     <h3 className="text-lg font-bold mb-2 text-light-text-primary dark:text-dark-text-primary">
       Polygons
@@ -61,6 +61,12 @@ const PolygonList = ({ polygons, togglePolygonVisibility, deletePolygon, handleP
             >
               Request
             </button>
+            <button
+              onClick={() => handleFetchContourLines(polygon)}
+              className="text-light-accent dark:text-dark-accent ml-2"
+            >
+              Contour Lines
+            </button>
           </li>
         ))}
       </ul>
@@ -92,10 +98,39 @@ function MapContainer() {
   const [floodMappingOverlay, setFloodMappingOverlay] = useState(null);
   const [showFloodMappingOverlay, setShowFloodMappingOverlay] = useState(false);
 
+  // Contour lines overlay state
+  const [contourLinesOverlay, setContourLinesOverlay] = useState(null);
+  const [showContourLinesOverlay, setShowContourLinesOverlay] = useState(false);
+
   // InfoWindow states
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [activeMarker, setActiveMarker] = useState(null);
   const [showingInfoWindow, setShowingInfoWindow] = useState(false);
+
+  // Fetch contour lines for a polygon
+  const handleFetchContourLines = async (polygon) => {
+    try {
+      const response = await axios.post('http://localhost:3000/agency/fetch-contour-lines', {
+        geometry: polygon,
+      });
+      const { contourLineUrl } = response.data;
+
+      // Compute bounds from polygon.coords
+      const lats = polygon.coords.map(c => c.lat);
+      const lngs = polygon.coords.map(c => c.lng);
+      const bounds = {
+        north: Math.max(...lats),
+        south: Math.min(...lats),
+        east: Math.max(...lngs),
+        west: Math.min(...lngs),
+      };
+
+      setContourLinesOverlay({ url: contourLineUrl, bounds });
+      setShowContourLinesOverlay(true);
+    } catch (error) {
+      console.error('Error fetching contour lines:', error);
+    }
+  };
 
   // Render markers
   const renderMarkers = (places, prefix, iconUrl, show) => {
@@ -330,6 +365,13 @@ function MapContainer() {
             options={{ opacity: showFloodMappingOverlay ? 1 : 0 }}
           />
         )}
+        {showContourLinesOverlay && contourLinesOverlay && (
+          <GroundOverlay
+            url={contourLinesOverlay.url}
+            bounds={contourLinesOverlay.bounds}
+            options={{ opacity: showContourLinesOverlay ? 1 : 0 }}
+          />
+        )}
       </GoogleMap>
 
       <div className="absolute top-0 left-0 m-2 z-10 flex gap-6 bg-transparent">
@@ -383,6 +425,15 @@ function MapContainer() {
               labelClass="text-light-accent dark:text-dark-accent font-medium"
             />
           </div>
+          <div className="px-4 py-2 bg-light-primary dark:bg-dark-primary bg-opacity-80 rounded-lg">
+            <ToggleSwitch
+              label="Contour Lines"
+              checked={showContourLinesOverlay}
+              onChange={() => setShowContourLinesOverlay(!showContourLinesOverlay)}
+              checkboxClass="h-4 w-4 text-light-accent dark:text-dark-accent"
+              labelClass="text-light-accent dark:text-dark-accent font-medium"
+            />
+          </div>
         </div>
       </div>
 
@@ -400,6 +451,7 @@ function MapContainer() {
         togglePolygonVisibility={togglePolygonVisibility}
         deletePolygon={deletePolygon}
         handlePolygonRequest={handlePolygonRequest}
+        handleFetchContourLines={handleFetchContourLines}
       />
     </div>
   ) : (

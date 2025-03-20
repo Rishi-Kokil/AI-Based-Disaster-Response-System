@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import User from '../model/user_model.js';
+import contourController from './contour_controller.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -38,7 +39,36 @@ initializeEE().catch(error => {
     console.error('Failed to initialize Google Earth Engine:', error);
 });
 
+const generateContourLines = async (geometry) => {
+    const eeGeometry = ee.Geometry.Polygon([geometry.map(coord => [coord.lng, coord.lat])]);
+    const srtm = ee.Image('USGS/SRTMGL1_003');
+    const lines = ee.List.sequence(0, 5000, 100);
+
+    const contourLines = lines.map(function(line) {
+        const Dem_contour = srtm
+            .convolve(ee.Kernel.gaussian(5, 3))
+            .subtract(ee.Image.constant(line)).zeroCrossing()
+            .multiply(ee.Image.constant(line)).toFloat();
+
+        return Dem_contour.mask(Dem_contour);
+    });
+
+    const contourLineImage = ee.ImageCollection(contourLines).mosaic().clip(eeGeometry);
+
+    const contourLineUrl = contourLineImage.getThumbURL({
+        region: eeGeometry,
+        dimensions: 1024,
+        format: 'png',
+        min: 0,
+        max: 3500,
+        palette: ['yellow', 'red']
+    });
+
+    return contourLineUrl;
+};
+
 const agencyController = {
+    fetchContourLines: contourController.fetchContourLines,
     createAgency: async (req, res) => {
         try {
             const agency = new Agency(req.body);
@@ -96,6 +126,70 @@ const agencyController = {
         next();
     },
     fetchFloodMappingPng: async(req,res)=>{
+        try {
+            const { geometry } = req.body;
+            if (!geometry || !geometry.coords || geometry.coords.length < 3) {
+                return res.status(400).json({ error: "Invalid geometry" });
+            }
+    
+            const { id, coords } = geometry;
+            const eeCoords = coords.map(coord => [coord.lng, coord.lat]);
+            const eeGeometry = ee.Geometry.Polygon([eeCoords]);
+    
+            // Fetch SAR collections
+            const sarBefore = ee.ImageCollection('COPERNICUS/S1_GRD')
+                .filterDate('2019-12-20', '2019-12-29')
+                .filterBounds(eeGeometry)
+                .filter(ee.Filter.listContains('transmitterReceiverPolarisation', 'VV'))
+                .filter(ee.Filter.eq('instrumentMode', 'IW'))
+                .filter(ee.Filter.eq('orbitProperties_pass', 'ASCENDING'))
+                .select(['VV', 'VH']);
+    
+            const sarAfter = ee.ImageCollection('COPERNICUS/S1_GRD')
+                .filterDate('2020-01-01', '2020-07-01')
+                .filterBounds(eeGeometry)
+                .filter(ee.Filter.listContains('transmitterReceiverPolarisation', 'VV'))
+                .filter(ee.Filter.eq('instrumentMode', 'IW'))
+                .filter(ee.Filter.eq('orbitProperties_pass', 'ASCENDING'))
+                .select(['VV', 'VH']);
+    
+            // Check if collections have images
+            const beforeSize = await sarBefore.size().getInfo();
+            const afterSize = await sarAfter.size().getInfo();
+            if (beforeSize === 0 || afterSize === 0) {
+                return res.status(404).json({ error: "No SAR data found for the given dates and area" });
+            }
+    
+            // Process images
+            const vvBefore = sarBefore.select('VV').mosaic();
+            const vvAfter = sarAfter.select('VV').mosaic();
+            const vvChange = vvAfter.subtract(vvBefore);
+    
+            const vhBefore = sarBefore.select('VH').mosaic();
+            const vhAfter = sarAfter.select('VH').mosaic();
+            const vhChange = vhAfter.subtract(vhBefore);
+    
+            // Get URLs
+            const [vvUrl, vhUrl] = await Promise.all([
+                getThumbUrl(vvChange.visualize({ min: -1, max: 1, palette: ['black', 'white'] }), {
+                    region: eeGeometry,
+                    dimensions: 1024,
+                    format: 'png'
+                }),
+                getThumbUrl(vhChange.visualize({ min: -1, max: 1, palette: ['black', 'white'] }), {
+                    region: eeGeometry,
+                    dimensions: 1024,
+                    format: 'png'
+                })
+            ]);
+    
+            res.json({ id, vvUrl, vhUrl });
+        } catch (error) {
+            console.error('Error:', error);
+            res.status(500).json({ error: 'Failed to generate flood maps' });
+        }     
+    },
+    fetchFloodMappingVV: async(req,res)=>{
         try {
             const { geometry } = req.body;
             console.log('Received geometry:', geometry);
@@ -176,7 +270,7 @@ const agencyController = {
 
 
             const sarBefore = ee.ImageCollection('COPERNICUS/S1_GRD')
-                .filterDate('2019-12-20', '2019-12-29')
+                .filterDate('2018-12-20', '2019-12-29')
                 .filterBounds(eeGeometry)
                 .filter(ee.Filter.listContains('transmitterReceiverPolarisation', 'VV'))
                 .filter(ee.Filter.eq('instrumentMode', 'IW'))
