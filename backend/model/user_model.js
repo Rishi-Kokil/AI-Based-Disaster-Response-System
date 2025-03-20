@@ -56,7 +56,7 @@ const userSchema = new mongoose.Schema({
     uploads: [uploadSchema] // Embedding the uploadSchema for storing uploads
 });
 
-// Hash password before saving user
+
 userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) return next(); // Only hash password if it's modified
     try {
@@ -69,7 +69,7 @@ userSchema.pre('save', async function (next) {
     }
 });
 
-// Compare passwords
+
 userSchema.methods.comparePassword = async function (password) {
     try {
         return await bcrypt.compare(password, this.password);
@@ -79,6 +79,6 @@ userSchema.methods.comparePassword = async function (password) {
     }
 };
 
-const User = mongoose.model('User1', userSchema);
+const User1 = mongoose.model('User1', userSchema);
 
-export default User;
+export default User1;

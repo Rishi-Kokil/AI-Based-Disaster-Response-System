@@ -35,19 +35,18 @@ class UserService {
 
     static async uploadImage(token, imagePath, location) {
         try {
-            const decoded = jwt.verify(token, 'arip'); // Ensure JWT_SECRET is correctly set
+            const decoded = jwt.verify(token, 'arip');
             const userId = decoded._id;
             const user = await userSchema.findById(userId);
             if (!user) {
                 throw new Error('User not found');
             }
 
-            // Parse the location string
             const locationParts = location.split(', ');
             const latitude = parseFloat(locationParts[0].split(': ')[1]);
             const longitude = parseFloat(locationParts[1].split(': ')[1]);
             
-            //Send image to Flask server
+    
             const form = new FormData();
             form.append('image', fs.createReadStream(imagePath));
 
