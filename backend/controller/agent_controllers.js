@@ -1,10 +1,13 @@
-import {ResponseAgent} from '../models';
-import {
-    signToken,
-    verifyToken,
-    hashPassword,
-    comparePassword
-} from '../utils';
+import dotenv from 'dotenv';
+import path from 'path';
+import { ResponseAgent, ResponseAgentProfile } from '../models';
+import { signToken, verifyToken } from '../utils';
+import { hashPassword, comparePassword } from '../utils';
+import fs from 'fs';
+
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
+
+const { RESPONSE_AGENT_SECRECT_KEY } = process.env;
 
 const agentControllers = {
     login: async (req, res) => {
@@ -21,45 +24,102 @@ const agentControllers = {
                 return res.status(401).json({ message: 'Invalid password' });
             }
 
-            const tokenData = { _id: agent._id, email: agent.email, name: agent.name };
-            const token = signToken(tokenData, process.env.JWT_SECRET, { expiresIn: '24h' });
+            const token = signToken(
+                { _id: agent._id, email: agent.email },
+                RESPONSE_AGENT_SECRECT_KEY,
+                { expiresIn: '24h' }
+            );
 
             res.status(200).json({ message: 'Login successful', token });
         } catch (error) {
-            console.error('Error during login:', error);
             res.status(500).json({ message: 'Internal server error' });
         }
     },
 
     signup: async (req, res) => {
-        const { name, email, phone_number, password, area_coordinates, profile_details } = req.body;
+        const session = await mongoose.startSession();
+        session.startTransaction();
 
         try {
-            const existingAgent = await ResponseAgent.findOne({ email });
-            if (existingAgent) {
-                return res.status(400).json({ message: 'Email already in use' });
+            const {
+                email,
+                password,
+                agency_id,
+                name,
+                phone_number,
+                location_details,
+                team_id
+            } = req.fields;
+
+            if (!email || !password || !agency_id || !name || !phone_number) {
+                await session.abortTransaction();
+                session.endSession();
+                return res.status(400).json({ error: 'Missing required fields' });
             }
 
-            const password_hash = await hashPassword(password);
+            const existingAgent = await ResponseAgent.findOne({ email }).session(session);
+            if (existingAgent) {
+                await session.abortTransaction();
+                session.endSession();
+                return res.status(409).json({ error: 'Email already registered' });
+            }
+
+            const passwordHash = await hashPassword(password);
 
             const newAgent = new ResponseAgent({
-                name,
                 email,
-                phone_number,
-                password_hash,
-                area_coordinates,
-                profile_details
+                password_hash: passwordHash
             });
 
-            await newAgent.save();
+            const savedAgent = await newAgent.save({ session });
 
-            const tokenData = { _id: newAgent._id, email: newAgent.email, name: newAgent.name };
-            const token = signToken(tokenData, process.env.JWT_SECRET, { expiresIn: '24h' });
+            const profileData = {
+                agent_id: savedAgent._id,
+                agency_id,
+                name,
+                phone_number,
+                location_details: location_details || undefined,
+                team_id: team_id || undefined,
+                account_created_on: new Date()
+            };
 
-            res.status(201).json({ message: 'Signup successful', token });
+            if (req.files?.profile_image) {
+                const file = req.files.profile_image;
+                profileData.profile_image = fs.readFileSync(file.path);
+            } else if (req.fields.profile_image) {
+                profileData.profile_image = Buffer.from(req.fields.profile_image, 'base64');
+            }
+
+            const newProfile = new ResponseAgentProfile(profileData);
+            await newProfile.save({ session });
+
+            const token = signToken(
+                { _id: savedAgent._id, email: savedAgent.email },
+                RESPONSE_AGENT_SECRECT_KEY,
+                { expiresIn: '24h' }
+            );
+
+            await session.commitTransaction();
+            session.endSession();
+
+            res.status(201).json({
+                message: 'Agent registered successfully',
+                token,
+                agent: {
+                    email: savedAgent.email,
+                    created_at: savedAgent.created_at
+                },
+                profile: {
+                    name: newProfile.name,
+                    phone_number: newProfile.phone_number,
+                    agency_id: newProfile.agency_id
+                }
+            });
+
         } catch (error) {
-            console.error('Error during signup:', error);
-            res.status(500).json({ message: 'Internal server error' });
+            await session.abortTransaction();
+            session.endSession();
+            res.status(500).json({ error: 'Registration failed', details: error.message });
         }
     }
 };
