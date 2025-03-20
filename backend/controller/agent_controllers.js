@@ -2,18 +2,17 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { ResponseAgent, ResponseAgentProfile } from "../model/index.js";
-
-import { signToken, verifyToken } from '../utils/index.js';
+import mongoose from 'mongoose';
+import { signToken } from '../utils/index.js';
 import { hashPassword, comparePassword } from '../utils/index.js';
 import fs from 'fs';
 
-// Resolve __dirname for ES modules
 const fileName = fileURLToPath(import.meta.url);
 const dirName = path.dirname(fileName);
 
 dotenv.config({ path: path.resolve(dirName, '../.env') });
 
-const { RESPONSE_AGENT_SECRECT_KEY } = process.env;
+const { RESPONSE_AGENT_SECRET_KEY } = process.env;
 
 export const agentControllers = {
     login: async (req, res) => {
@@ -32,7 +31,7 @@ export const agentControllers = {
 
             const token = signToken(
                 { _id: agent._id, email: agent.email },
-                RESPONSE_AGENT_SECRECT_KEY,
+                RESPONSE_AGENT_SECRET_KEY,
                 { expiresIn: '24h' }
             );
 
@@ -43,9 +42,6 @@ export const agentControllers = {
     },
 
     signup: async (req, res) => {
-        const session = await mongoose.startSession();
-        session.startTransaction();
-        console.log("request recieved");
         try {
             const {
                 email,
@@ -55,15 +51,11 @@ export const agentControllers = {
             } = req.fields;
 
             if (!email || !password || !name || !phone_number) {
-                await session.abortTransaction();
-                session.endSession();
                 return res.status(400).json({ error: 'Missing required fields' });
             }
 
-            const existingAgent = await ResponseAgent.findOne({ email }).session(session);
+            const existingAgent = await ResponseAgent.findOne({ email });
             if (existingAgent) {
-                await session.abortTransaction();
-                session.endSession();
                 return res.status(409).json({ error: 'Email already registered' });
             }
 
@@ -74,7 +66,7 @@ export const agentControllers = {
                 password_hash: passwordHash
             });
 
-            const savedAgent = await newAgent.save({ session });
+            const savedAgent = await newAgent.save();
 
             const profileData = {
                 agent_id: savedAgent._id,
@@ -91,16 +83,13 @@ export const agentControllers = {
             }
 
             const newProfile = new ResponseAgentProfile(profileData);
-            await newProfile.save({ session });
+            await newProfile.save();
 
             const token = signToken(
                 { _id: savedAgent._id, email: savedAgent.email },
-                RESPONSE_AGENT_SECRECT_KEY,
+                RESPONSE_AGENT_SECRET_KEY,
                 { expiresIn: '24h' }
             );
-
-            await session.commitTransaction();
-            session.endSession();
 
             res.status(201).json({
                 message: 'Agent registered successfully',
@@ -117,8 +106,6 @@ export const agentControllers = {
             });
 
         } catch (error) {
-            await session.abortTransaction();
-            session.endSession();
             res.status(500).json({ error: 'Registration failed', details: error.message });
         }
     }

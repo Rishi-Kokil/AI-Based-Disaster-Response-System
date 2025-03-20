@@ -8,7 +8,7 @@ import User from '../model/user_model.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Resolve the path to one level up from the current directory
+
 const privateKeyPath = path.resolve(__dirname, '../privateKey.json');
 console.log('Private key path:', privateKeyPath);
 const privateKey = JSON.parse(fs.readFileSync(privateKeyPath, 'utf-8'));
@@ -91,7 +91,10 @@ const agencyController = {
     },
     checkGEEInitialized: (req, res, next) => {
         if (!isEEInitialized) {
-            return res.status(500).json({ error: 'Google Earth Engine is not initialized.' });
+            return res.status(503).json({ 
+                error: 'Earth Engine not available',
+                details: 'Service temporarily unavailable'
+            });
         }
         next();
     },
@@ -100,17 +103,17 @@ const agencyController = {
             const { geometry } = req.body;
             console.log('Received geometry:', geometry);
     
-            // Validate input
+      
             if (!geometry || !geometry.coords || !Array.isArray(geometry.coords) || geometry.coords.length < 3) {
                 return res.status(400).json({ error: "Invalid geometry provided" });
             }
     
             const { id, coords } = geometry;
     
-            // Convert the received geometry to an Earth Engine Polygon
+        
             const eeGeometry = ee.Geometry.Polygon([coords.map(coord => [coord.lng, coord.lat])]);
     
-            // Load Sentinel-1 SAR images for the 'before' period
+            
             const sarBefore = ee.ImageCollection('COPERNICUS/S1_GRD')
                 .filterDate('2019-12-20', '2019-12-29')
                 .filterBounds(eeGeometry)
@@ -120,7 +123,7 @@ const agencyController = {
                 .select('VV')
                 .map(img => img.focalMean(30, 'square', 'meters').copyProperties(img, img.propertyNames()));
     
-            // Load Sentinel-1 SAR images for the 'after' period
+        
             const sarAfter = ee.ImageCollection('COPERNICUS/S1_GRD')
                 .filterDate('2020-01-01', '2020-02-01')
                 .filterBounds(eeGeometry)
@@ -130,13 +133,13 @@ const agencyController = {
                 .select('VV')
                 .map(img => img.focalMean(30, 'square', 'meters').copyProperties(img, img.propertyNames()));
     
-            // Calculate the difference to detect flooded regions
+        
             const floodedRegion = sarAfter
                 .mosaic()
                 .subtract(sarBefore.mosaic())
-                .gt(1.5); // Example threshold for flood detection
+                .gt(1.5); 
     
-            // Generate a map visualization URL
+         
             const visParams = { min: 0, max: 1, palette: ['black', 'blue'] };
             const floodMapUrl = floodedRegion.visualize(visParams).getThumbURL({
                 region: eeGeometry,
@@ -144,10 +147,10 @@ const agencyController = {
                 format: 'png'
             });
     
-            // Send the generated flood map URL as a response
+            
             res.json({ id, floodMapUrl });
         } catch (error) {
-            console.error('Error processing flood mapping:', error);
+            console.log('Error processing flood mapping:', error);
             res.status(500).json({ error: 'Error processing flood mapping' });
         }
     },
