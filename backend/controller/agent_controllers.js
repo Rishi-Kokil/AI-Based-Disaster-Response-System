@@ -45,7 +45,7 @@ export const agentControllers = {
     signup: async (req, res) => {
         const session = await mongoose.startSession();
         session.startTransaction();
-
+        console.log("request recieved");
         try {
             const {
                 email,
