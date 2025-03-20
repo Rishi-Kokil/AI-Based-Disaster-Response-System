@@ -44,14 +44,11 @@ const agentControllers = {
             const {
                 email,
                 password,
-                agency_id,
                 name,
                 phone_number,
-                location_details,
-                team_id
             } = req.fields;
 
-            if (!email || !password || !agency_id || !name || !phone_number) {
+            if (!email || !password || !name || !phone_number) {
                 await session.abortTransaction();
                 session.endSession();
                 return res.status(400).json({ error: 'Missing required fields' });
@@ -75,11 +72,8 @@ const agentControllers = {
 
             const profileData = {
                 agent_id: savedAgent._id,
-                agency_id,
                 name,
                 phone_number,
-                location_details: location_details || undefined,
-                team_id: team_id || undefined,
                 account_created_on: new Date()
             };
 
