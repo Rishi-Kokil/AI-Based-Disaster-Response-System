@@ -16,6 +16,7 @@ const responseAgentProfileSchema = new mongoose.Schema({
     account_created_on: { type: Date, default: Date.now },
     location_details: { type: String }, // JSON containing location data when on duty
     team_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Team' }, // Foreign Key to Team (nullable)
+    profile_image: { type: Buffer }, // Field to store uploaded image as binary data
     created_at: { type: Date, default: Date.now },
     updated_at: { type: Date, default: Date.now },
 });
@@ -25,4 +26,3 @@ const ResponseAgentProfile = mongoose.model('ResponseAgentProfile', responseAgen
 const ResponseAgent = mongoose.model('ResponseAgent', responseAgentSchema);
 
 export { ResponseAgent, ResponseAgentProfile };
-
