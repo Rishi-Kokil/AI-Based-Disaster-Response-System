@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import db from '../config/db.js';
 import bcrypt from 'bcrypt';
 
 const uploadSchema = new mongoose.Schema({
@@ -80,6 +79,6 @@ userSchema.methods.comparePassword = async function (password) {
     }
 };
 
-const User = db.model('User', userSchema);
+const User = mongoose.model('User1', userSchema);
 
 export default User;
