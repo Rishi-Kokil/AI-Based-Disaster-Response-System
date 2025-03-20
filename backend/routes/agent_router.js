@@ -6,6 +6,6 @@ const agentRouter = express.Router();
 
 // Routes
 agentRouter.post('/signin', formidableMiddleware(), agentControllers.signin);
-agentRouter.post('/signup', agentController.signup);
+agentRouter.post('/signup', agentControllers.signup);
 
 export default agentRouter;

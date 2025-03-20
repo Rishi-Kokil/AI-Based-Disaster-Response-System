@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import path from 'path';
-import { ResponseAgent, ResponseAgentProfile } from '../models';
+import { ResponseAgent, ResponseAgentProfile } from '../model';
 import { signToken, verifyToken } from '../utils';
 import { hashPassword, comparePassword } from '../utils';
 import fs from 'fs';
