@@ -10,5 +10,6 @@ agencyRouter.post("/floopMapping", agencyController.checkGEEInitialized , agency
 agencyRouter.post("/floodMapping/image", agencyController.checkGEEInitialized, agencyController.getSentinel1VVVH);
 agencyRouter.get("/locationMapping", agencyController.fetchLocationMappings);
 agencyRouter.get("/volunteer-fetch", userController.fetchVolunteerData);
+agencyRouter.post('/fetch-contour-lines', agencyController.checkGEEInitialized, agencyController.fetchContourLines);
 
 export default agencyRouter;

@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 import User from '../model/user_model.js';
 import dotenv from 'dotenv';
 import axios from "axios";
+import contourController from './contour_controller.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -231,7 +232,36 @@ initializeEE().catch(error => {
     console.error('Failed to initialize Google Earth Engine:', error.message);
 });
 
+const generateContourLines = async (geometry) => {
+    const eeGeometry = ee.Geometry.Polygon([geometry.map(coord => [coord.lng, coord.lat])]);
+    const srtm = ee.Image('USGS/SRTMGL1_003');
+    const lines = ee.List.sequence(0, 5000, 100);
+
+    const contourLines = lines.map(function(line) {
+        const Dem_contour = srtm
+            .convolve(ee.Kernel.gaussian(5, 3))
+            .subtract(ee.Image.constant(line)).zeroCrossing()
+            .multiply(ee.Image.constant(line)).toFloat();
+
+        return Dem_contour.mask(Dem_contour);
+    });
+
+    const contourLineImage = ee.ImageCollection(contourLines).mosaic().clip(eeGeometry);
+
+    const contourLineUrl = contourLineImage.getThumbURL({
+        region: eeGeometry,
+        dimensions: 1024,
+        format: 'png',
+        min: 0,
+        max: 3500,
+        palette: ['yellow', 'red']
+    });
+
+    return contourLineUrl;
+};
+
 const agencyController = {
+    fetchContourLines: contourController.fetchContourLines,
     createAgency: async (req, res) => {
         try {
             const agency = new Agency(req.body);
@@ -348,7 +378,7 @@ const agencyController = {
             const eeGeometry = ee.Geometry.Polygon([coords.map(coord => [coord.lng, coord.lat])]);
 
             const sarBefore = ee.ImageCollection('COPERNICUS/S1_GRD')
-                .filterDate('2019-12-20', '2019-12-29')
+                .filterDate('2018-12-20', '2019-12-29')
                 .filterBounds(eeGeometry)
                 .filter(ee.Filter.listContains('transmitterReceiverPolarisation', 'VV'))
                 .filter(ee.Filter.eq('instrumentMode', 'IW'))
