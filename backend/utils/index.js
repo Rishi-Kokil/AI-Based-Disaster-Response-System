@@ -1,9 +1,2 @@
-import {signToken, verifyToken} from './auth/signtoken';
-import {hashPassword, comparePassword} from './auth/password';
-
-export {
-    signToken,
-    verifyToken,
-    hashPassword,
-    comparePassword
-};
+export {signToken, verifyToken} from './auth/jwt_utils.js';
+export {hashPassword, comparePassword} from './auth/pasword_utils.js';

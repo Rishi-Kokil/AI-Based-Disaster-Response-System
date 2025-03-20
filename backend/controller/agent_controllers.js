@@ -1,15 +1,21 @@
 import dotenv from 'dotenv';
 import path from 'path';
-import { ResponseAgent, ResponseAgentProfile } from '../model';
-import { signToken, verifyToken } from '../utils';
-import { hashPassword, comparePassword } from '../utils';
+import { fileURLToPath } from 'url';
+import { ResponseAgent, ResponseAgentProfile } from "../model/index.js";
+
+import { signToken, verifyToken } from '../utils/index.js';
+import { hashPassword, comparePassword } from '../utils/index.js';
 import fs from 'fs';
 
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
+// Resolve __dirname for ES modules
+const fileName = fileURLToPath(import.meta.url);
+const dirName = path.dirname(fileName);
+
+dotenv.config({ path: path.resolve(dirName, '../.env') });
 
 const { RESPONSE_AGENT_SECRECT_KEY } = process.env;
 
-const agentControllers = {
+export const agentControllers = {
     login: async (req, res) => {
         const { email, password } = req.body;
 
@@ -117,5 +123,3 @@ const agentControllers = {
         }
     }
 };
-
-export default agentControllers;
