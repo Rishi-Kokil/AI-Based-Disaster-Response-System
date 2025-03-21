@@ -4,11 +4,12 @@ import { CopernicusService } from '../services/copernicus_service.js';
 import { EarthEngineService } from '../services/earth_engine_service.js';
 import { isValidGeoJSON } from '../utils/geojson_utils.js';
 import { saveImage } from '../utils/image_utils.js';
-import {logger} from '../utils/logger.js';
+import { logger } from '../utils/logger.js';
 import contourController from './contour_controller.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import ee from '@google/earthengine'; // Import the Google Earth Engine module
 
 const copernicusService = new CopernicusService(
     process.env.CLIENT_ID,
@@ -28,9 +29,14 @@ const earthEngineService = new EarthEngineService(
 );
 
 // Initialize Earth Engine on startup
-earthEngineService.initialize().catch(error => {
+let isEEInitialized = false;
+
+earthEngineService.initialize().then(() => {
+    isEEInitialized = true;
+}).catch(error => {
     logger.error('Earth Engine initialization failed', { error });
 });
+
 const agencyController = {
     fetchContourLines: contourController.fetchContourLines,
     createAgency: async (req, res) => {
@@ -134,11 +140,9 @@ const agencyController = {
     },
 
     fetchFloodMapping: async (req, res) => {
-
         try {
             const { geometry } = req.body;
             console.log('Received geometry:', geometry);
-
 
             if (!geometry || !geometry.coords || !Array.isArray(geometry.coords) || geometry.coords.length < 3) {
                 return res.status(400).json({ error: "Invalid geometry provided" });

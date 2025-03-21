@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { GoogleMap, Marker, Polygon, Polyline, InfoWindow, GroundOverlay, useJsApiLoader } from '@react-google-maps/api';
 import axios from 'axios';
 import ToggleSwitch from './ToggleSwitch';
@@ -17,9 +17,6 @@ const mapStyles = [
   { featureType: 'administrative', elementType: 'labels', stylers: [{ visibility: 'on' }] },
   { featureType: 'road', elementType: 'labels', stylers: [{ visibility: 'on' }] }
 ];
-
-
-
 
 function MapContainer() {
   const { isLoaded } = useJsApiLoader({
@@ -54,28 +51,53 @@ function MapContainer() {
   const [activeMarker, setActiveMarker] = useState(null);
   const [showingInfoWindow, setShowingInfoWindow] = useState(false);
 
+  const [isContourLoading, setIsContourLoading] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      setContourLinesOverlay(null);
+      setShowContourLinesOverlay(false);
+    };
+  }, []);
+
   // Fetch contour lines for a polygon
   const handleFetchContourLines = async (polygon) => {
+    if (!polygon?.coords || polygon.coords.length < 3) {
+      alert('Please draw and select a valid polygon first');
+      return;
+    }
+
     try {
+      setIsContourLoading(true);
       const response = await axios.post('http://localhost:3000/agency/fetch-contour-lines', {
         geometry: polygon,
       });
-      const { contourLineUrl } = response.data;
+      
+      if (!response.data.contourLineUrl) {
+        throw new Error('No contour data received');
+      }
 
-      // Compute bounds from polygon.coords
-      const lats = polygon.coords.map(c => c.lat);
-      const lngs = polygon.coords.map(c => c.lng);
-      const bounds = {
-        north: Math.max(...lats),
-        south: Math.min(...lats),
-        east: Math.max(...lngs),
-        west: Math.min(...lngs),
-      };
-
-      setContourLinesOverlay({ url: contourLineUrl, bounds });
+      // Fix 3: Convert coordinates properly
+      const coords = polygon.coords;
+      const bounds = new window.google.maps.LatLngBounds();
+      coords.forEach(coord => bounds.extend(new window.google.maps.LatLng(coord.lat, coord.lng)));
+      
+      setContourLinesOverlay({
+        url: response.data.contourLineUrl,
+        bounds: {
+          north: bounds.getNorthEast().lat(),
+          south: bounds.getSouthWest().lat(),
+          east: bounds.getNorthEast().lng(),
+          west: bounds.getSouthWest().lng(),
+        }
+      });
+      
       setShowContourLinesOverlay(true);
     } catch (error) {
-      console.error('Error fetching contour lines:', error);
+      console.error('Contour error:', error);
+      alert(`Contour Error: ${error.message || 'Failed to generate contours'}`);
+    } finally {
+      setIsContourLoading(false);
     }
   };
 
@@ -284,8 +306,8 @@ function MapContainer() {
         mapContainerClassName="w-full h-full"
         options={{ styles: mapStyles }}
       >
-        {renderMarkers(gasStations, 'gas', GAS_ICON_URL, showGasStations)}
-        {renderMarkers(hospitals, 'hospital', HOSPITAL_ICON_URL, showHospitals)}
+        {renderMarkers(gasStations, "gas", GAS_ICON_URL, showGasStations)}
+        {renderMarkers(hospitals, "hospital", HOSPITAL_ICON_URL, showHospitals)}
         {renderLocationMappingsMarkers()}
         {renderPolygons()}
         {renderDrawingPolyline()}
@@ -313,9 +335,13 @@ function MapContainer() {
         )}
         {showContourLinesOverlay && contourLinesOverlay && (
           <GroundOverlay
+            key="contour-overlay"
             url={contourLinesOverlay.url}
             bounds={contourLinesOverlay.bounds}
-            options={{ opacity: showContourLinesOverlay ? 1 : 0 }}
+            options={{
+              opacity: 0.7,
+              clickable: false,
+            }}
           />
         )}
       </GoogleMap>
@@ -366,7 +392,9 @@ function MapContainer() {
             <ToggleSwitch
               label="Flood Mapping"
               checked={showFloodMappingOverlay}
-              onChange={() => setShowFloodMappingOverlay(!showFloodMappingOverlay)}
+              onChange={() =>
+                setShowFloodMappingOverlay(!showFloodMappingOverlay)
+              }
               checkboxClass="h-4 w-4 text-light-accent dark:text-dark-accent"
               labelClass="text-light-accent dark:text-dark-accent font-medium"
             />
@@ -375,7 +403,9 @@ function MapContainer() {
             <ToggleSwitch
               label="Contour Lines"
               checked={showContourLinesOverlay}
-              onChange={() => setShowContourLinesOverlay(!showContourLinesOverlay)}
+              onChange={() =>
+                setShowContourLinesOverlay(!showContourLinesOverlay)
+              }
               checkboxClass="h-4 w-4 text-light-accent dark:text-dark-accent"
               labelClass="text-light-accent dark:text-dark-accent font-medium"
             />
@@ -385,7 +415,8 @@ function MapContainer() {
 
       <div className="absolute top-0 right-0 m-2 z-10">
         <button
-          onClick={fetchLocationMappings}
+          // onClick={fetchLocationMappings}
+          onClick={handleFetchContourLines}
           className="px-4 py-2 bg-light-primary dark:bg-dark-primary bg-opacity-80 rounded-lg text-light-text-inverted dark:text-dark-text-inverted"
         >
           Fetch Location Mappings
@@ -396,8 +427,9 @@ function MapContainer() {
         polygons={polygons}
         togglePolygonVisibility={togglePolygonVisibility}
         deletePolygon={deletePolygon}
-        handlePolygonRequest={handlePolygonRequest}
-        handleFetchContourLines={handleFetchContourLines}
+        // handlePolygonRequest={handlePolygonRequest}
+        handlePolygonRequest={handleFetchContourLines}
+        handleFetchContourLines={handleFetchContourLines} // Ensure proper prop name
       />
     </div>
   ) : (
