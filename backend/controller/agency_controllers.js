@@ -10,11 +10,13 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import ee from '@google/earthengine'; // Import the Google Earth Engine module
+import ee from '@google/earthengine';
 
 const copernicusService = new CopernicusService(
     process.env.CLIENT_ID,
     process.env.CLIENT_SECRET
 );
+
 
 // Add these at the top of your file
 const __filename = fileURLToPath(import.meta.url);
@@ -90,7 +92,7 @@ const agencyController = {
         }
     },
     checkGEEInitialized: (req, res, next) => {
-        if (!isEEInitialized) {
+        if (!earthEngineService.isInitialized) {
             return res.status(500).json({ error: 'Google Earth Engine is not initialized.' });
         }
         console.log('Middleware checkGEEInitialized passed.');
