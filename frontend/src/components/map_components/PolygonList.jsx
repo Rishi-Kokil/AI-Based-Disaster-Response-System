@@ -1,6 +1,6 @@
 import React from 'react'
 
-function PolygonList({ polygons, togglePolygonVisibility, deletePolygon, handlePolygonRequest }) {
+function PolygonList({ polygons, togglePolygonVisibility, deletePolygon, handlePolygonRequest, handleContourRequest = null }) {
     return (
         <div className="absolute bottom-0 left-0 m-4 p-4 bg-light-primary dark:bg-dark-primary bg-opacity-80 rounded-lg z-10">
             <h3 className="text-lg font-bold mb-2 text-light-text-primary dark:text-dark-text-primary">
@@ -34,6 +34,12 @@ function PolygonList({ polygons, togglePolygonVisibility, deletePolygon, handleP
                                 className="text-light-accent dark:text-dark-accent ml-2"
                             >
                                 Request
+                            </button>
+                            <button
+                                onClick={() => handleContourRequest(polygon)}
+                                className="text-light-accent dark:text-dark-accent ml-2"
+                            >
+                                Contour_Request
                             </button>
                         </li>
                     ))}

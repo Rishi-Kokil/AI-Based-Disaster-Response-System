@@ -10,7 +10,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import ee from '@google/earthengine'; // Import the Google Earth Engine module
-import ee from '@google/earthengine';
+
 
 const copernicusService = new CopernicusService(
     process.env.CLIENT_ID,

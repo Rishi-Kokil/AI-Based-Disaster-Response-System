@@ -60,6 +60,24 @@ function MapContainer() {
     };
   }, []);
 
+  const fetchCountourMappings = async (polygon) => {
+    try {
+      const response = await axios.post('http://localhost:3000/agency/fetch-contour-image', {
+        geometry: polygon,
+      });
+  
+      if (Array.isArray(response.data)) {
+        setLocationMappings(response.data);
+        setShowLocationMappings(true);
+      } else {
+        console.error('Unexpected response format:', response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching location mappings:', error);
+      throw error;
+    }
+  };
+
   // Fetch contour lines for a polygon
   const handleFetchContourLines = async (polygon) => {
     if (!polygon?.coords || polygon.coords.length < 3) {
@@ -98,6 +116,26 @@ function MapContainer() {
       alert(`Contour Error: ${error.message || 'Failed to generate contours'}`);
     } finally {
       setIsContourLoading(false);
+    }
+  };
+
+  const handleProcessImage = async () => {
+    setIsProcessing(true);
+    try {
+      const mapElement = document.querySelector('.google-map-container');
+      const canvas = await html2canvas(mapElement);
+      const imageData = canvas.toDataURL('image/png').split(',')[1];
+
+      const response = await axios.post('http://localhost:5000/process-image', {
+        image: imageData
+      });
+
+      setProcessedImage(response.data.processed_image);
+    } catch (error) {
+      console.error('Image processing error:', error);
+      alert('Failed to process image');
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -430,6 +468,7 @@ function MapContainer() {
         // handlePolygonRequest={handlePolygonRequest}
         handlePolygonRequest={handleFetchContourLines}
         handleFetchContourLines={handleFetchContourLines} // Ensure proper prop name
+        handleContourRequest={fetchCountourMappings}
       />
     </div>
   ) : (
