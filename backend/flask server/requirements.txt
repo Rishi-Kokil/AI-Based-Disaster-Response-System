@@ -1,0 +1,31 @@
+# Core Dependencies
+Flask
+torch
+torchvision
+numpy
+tifffile
+scikit-image
+segmentation-models-pytorch
+matplotlib
+Werkzeug
+opencv-python-headless
+transformers
+langchain-google-genai
+python-dotenv
+Pillow
+folium
+rasterio
+geopandas
+
+# Additional Dependencies
+shapely
+fiona
+pyproj
+rtree
+gdal
+pycocotools
+tqdm
+scipy
+pandas
+requests
+urllib3

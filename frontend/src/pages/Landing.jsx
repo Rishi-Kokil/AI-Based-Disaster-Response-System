@@ -1,12 +1,14 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useContext } from "react";
 import { navLinks } from "@/constants/navlinks";
 import Button from "../components/Button";
 import { useNavigate } from "react-router";
+import { SnackbarContext } from "@/context";
 
 
 function Landing() {
 
   const navigate = useNavigate();
+  const { showSnackbar } = useContext(SnackbarContext);
 
   const handleLogin = useCallback(() => navigate("/auth/login"), []);
   const handleSingup = useCallback(() => navigate("/auth/signup"), []);
@@ -57,6 +59,7 @@ function Landing() {
         <p className="mt-4 text-lg text-center max-w-2xl text-light-text-secondary dark:text-dark-text-secondary">
           Leveraging AI, satellite data, and real-time social insights to detect and respond to disasters efficiently.
         </p>
+
         <div className="mt-6 flex space-x-4">
 
           <Button

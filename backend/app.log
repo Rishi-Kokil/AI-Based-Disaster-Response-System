@@ -27,3 +27,609 @@
 2025-03-21 00:13:02 [INFO]: Initializing Earth Engine
 2025-03-21 00:13:02 [DEBUG]: Earth Engine authentication successful
 2025-03-21 00:13:08 [INFO]: Earth Engine initialized
+2025-03-21 00:20:00 [INFO]: Initializing Earth Engine
+2025-03-21 00:20:01 [DEBUG]: Earth Engine authentication successful
+2025-03-21 00:20:05 [INFO]: Earth Engine initialized
+2025-03-21 02:10:11 [INFO]: Initializing Earth Engine
+2025-03-21 02:10:12 [DEBUG]: Earth Engine authentication successful
+2025-03-21 02:10:14 [INFO]: Earth Engine initialized
+2025-03-21 02:11:32 [INFO]: Initializing Earth Engine
+2025-03-21 02:11:33 [DEBUG]: Earth Engine authentication successful
+2025-03-21 02:11:35 [INFO]: Earth Engine initialized
+2025-03-21 02:11:47 [INFO]: Initializing Earth Engine
+2025-03-21 02:11:48 [DEBUG]: Earth Engine authentication successful
+2025-03-21 02:11:50 [INFO]: Earth Engine initialized
+2025-03-21 02:11:56 [INFO]: Initializing Earth Engine
+2025-03-21 02:11:56 [DEBUG]: Earth Engine authentication successful
+2025-03-21 02:11:59 [INFO]: Earth Engine initialized
+2025-03-21 02:12:37 [INFO]: Initializing Earth Engine
+2025-03-21 02:12:38 [DEBUG]: Earth Engine authentication successful
+2025-03-21 02:12:41 [INFO]: Earth Engine initialized
+2025-03-21 02:14:07 [INFO]: Initializing Earth Engine
+2025-03-21 02:14:08 [DEBUG]: Earth Engine authentication successful
+2025-03-21 02:14:11 [INFO]: Earth Engine initialized
+2025-03-21 02:15:30 [INFO]: Initializing Earth Engine
+2025-03-21 02:15:31 [DEBUG]: Earth Engine authentication successful
+2025-03-21 02:15:34 [INFO]: Earth Engine initialized
+2025-03-21 02:15:50 [INFO]: Initializing Earth Engine
+2025-03-21 02:15:51 [DEBUG]: Earth Engine authentication successful
+2025-03-21 02:15:54 [INFO]: Earth Engine initialized
+2025-03-21 06:48:40 [INFO]: Initializing Earth Engine
+2025-03-21 06:48:40 [DEBUG]: Earth Engine authentication successful
+2025-03-21 06:48:41 [INFO]: Earth Engine initialized
+2025-03-21 06:49:09 [INFO]: Initializing Earth Engine
+2025-03-21 06:49:09 [DEBUG]: Earth Engine authentication successful
+2025-03-21 06:49:12 [INFO]: Initializing Earth Engine
+2025-03-21 06:49:12 [DEBUG]: Earth Engine authentication successful
+2025-03-21 06:49:14 [INFO]: Earth Engine initialized
+2025-03-21 06:51:39 [INFO]: Initializing Earth Engine
+2025-03-21 06:51:39 [DEBUG]: Earth Engine authentication successful
+2025-03-21 06:51:41 [INFO]: Earth Engine initialized
+2025-03-21 06:53:46 [INFO]: Initializing Earth Engine
+2025-03-21 06:53:46 [DEBUG]: Earth Engine authentication successful
+2025-03-21 06:53:47 [INFO]: Earth Engine initialized
+2025-03-21 06:55:20 [INFO]: Initializing Earth Engine
+2025-03-21 06:55:21 [DEBUG]: Earth Engine authentication successful
+2025-03-21 06:55:23 [INFO]: Earth Engine initialized
+2025-03-21 06:58:13 [INFO]: Initializing Earth Engine
+2025-03-21 06:58:13 [DEBUG]: Earth Engine authentication successful
+2025-03-21 06:58:14 [INFO]: Earth Engine initialized
+2025-03-21 07:01:35 [INFO]: Initializing Earth Engine
+2025-03-21 07:01:35 [DEBUG]: Earth Engine authentication successful
+2025-03-21 07:01:42 [INFO]: Initializing Earth Engine
+2025-03-21 07:01:42 [DEBUG]: Earth Engine authentication successful
+2025-03-21 07:01:44 [INFO]: Earth Engine initialized
+2025-03-21 07:02:23 [INFO]: Initializing Earth Engine
+2025-03-21 07:02:23 [DEBUG]: Earth Engine authentication successful
+2025-03-21 07:02:25 [INFO]: Initializing Earth Engine
+2025-03-21 07:02:26 [DEBUG]: Earth Engine authentication successful
+2025-03-21 07:02:27 [INFO]: Earth Engine initialized
+2025-03-21 07:12:41 [INFO]: Initializing Earth Engine
+2025-03-21 07:12:42 [DEBUG]: Earth Engine authentication successful
+2025-03-21 07:12:44 [INFO]: Earth Engine initialized
+2025-03-21 07:56:12 [INFO]: Initializing Earth Engine
+2025-03-21 07:56:12 [DEBUG]: Earth Engine authentication successful
+2025-03-21 07:56:13 [INFO]: Earth Engine initialized
+2025-03-21 07:56:19 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 07:57:01 [INFO]: Initializing Earth Engine
+2025-03-21 07:57:01 [DEBUG]: Earth Engine authentication successful
+2025-03-21 07:57:03 [INFO]: Earth Engine initialized
+2025-03-21 07:57:03 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 07:57:03 [INFO]: Requesting new Copernicus access token
+2025-03-21 07:57:04 [ERROR]: Access token request failed
+2025-03-21 07:58:02 [INFO]: Initializing Earth Engine
+2025-03-21 07:58:02 [DEBUG]: Earth Engine authentication successful
+2025-03-21 07:58:04 [INFO]: Earth Engine initialized
+2025-03-21 08:00:33 [INFO]: Initializing Earth Engine
+2025-03-21 08:00:34 [DEBUG]: Earth Engine authentication successful
+2025-03-21 08:00:35 [INFO]: Earth Engine initialized
+2025-03-21 08:00:38 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 08:00:38 [INFO]: Requesting new Copernicus access token
+2025-03-21 08:00:38 [ERROR]: Access token request failed
+2025-03-21 08:01:03 [INFO]: Initializing Copernicus service
+2025-03-21 08:01:03 [INFO]: Initializing Earth Engine
+2025-03-21 08:01:03 [DEBUG]: Earth Engine authentication successful
+2025-03-21 08:01:05 [INFO]: Earth Engine initialized
+2025-03-21 08:01:14 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 08:01:14 [INFO]: Requesting new Copernicus access token
+2025-03-21 08:01:15 [ERROR]: Access token request failed
+2025-03-21 08:03:47 [INFO]: Initializing Copernicus service
+2025-03-21 08:03:47 [INFO]: Initializing Earth Engine
+2025-03-21 08:03:47 [DEBUG]: Earth Engine authentication successful
+2025-03-21 08:03:49 [INFO]: Earth Engine initialized
+2025-03-21 08:04:20 [INFO]: Initializing Copernicus service
+2025-03-21 08:04:20 [INFO]: Initializing Earth Engine
+2025-03-21 08:04:21 [DEBUG]: Earth Engine authentication successful
+2025-03-21 08:04:22 [INFO]: Earth Engine initialized
+2025-03-21 08:04:26 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 08:04:26 [INFO]: Requesting new Copernicus access token
+2025-03-21 08:04:28 [INFO]: New access token obtained successfully
+2025-03-21 08:04:45 [INFO]: Initializing Copernicus service
+2025-03-21 08:04:45 [INFO]: Initializing Earth Engine
+2025-03-21 08:04:45 [DEBUG]: Earth Engine authentication successful
+2025-03-21 08:04:46 [INFO]: Earth Engine initialized
+2025-03-21 08:04:49 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 08:04:49 [INFO]: Requesting new Copernicus access token
+2025-03-21 08:04:50 [INFO]: New access token obtained successfully
+2025-03-21 08:04:50 [INFO]: Checking data availability
+2025-03-21 08:04:50 [DEBUG]: Calculating bounding box
+2025-03-21 08:04:50 [DEBUG]: Bounding box calculated: [12.4, 41.8, 12.6, 42]
+2025-03-21 08:04:51 [DEBUG]: Found 1 features
+2025-03-21 08:04:51 [INFO]: Processing polarization for band VV
+2025-03-21 08:04:51 [ERROR]: Polarization processing failed for VV
+2025-03-21 08:04:51 [INFO]: Processing polarization for band VH
+2025-03-21 08:04:51 [ERROR]: Polarization processing failed for VH
+2025-03-21 08:06:03 [INFO]: Initializing Copernicus service
+2025-03-21 08:06:03 [INFO]: Initializing Earth Engine
+2025-03-21 08:06:04 [DEBUG]: Earth Engine authentication successful
+2025-03-21 08:06:05 [INFO]: Earth Engine initialized
+2025-03-21 08:06:07 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 08:06:07 [INFO]: Requesting new Copernicus access token
+2025-03-21 08:06:08 [INFO]: New access token obtained successfully
+2025-03-21 08:06:08 [INFO]: Checking data availability
+2025-03-21 08:06:08 [DEBUG]: Calculating bounding box
+2025-03-21 08:06:08 [DEBUG]: Bounding box calculated: [12.4, 41.8, 12.6, 42]
+2025-03-21 08:06:09 [DEBUG]: Found 1 features
+2025-03-21 08:06:09 [INFO]: Processing polarization for band VV
+2025-03-21 08:06:09 [ERROR]: Polarization processing failed for VV
+2025-03-21 08:06:09 [INFO]: Processing polarization for band VH
+2025-03-21 08:06:09 [ERROR]: Polarization processing failed for VH
+2025-03-21 08:08:05 [INFO]: Initializing Copernicus service
+2025-03-21 08:08:05 [INFO]: Initializing Earth Engine
+2025-03-21 08:08:05 [DEBUG]: Earth Engine authentication successful
+2025-03-21 08:08:06 [INFO]: Earth Engine initialized
+2025-03-21 08:08:08 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 08:08:08 [INFO]: Requesting new Copernicus access token
+2025-03-21 08:08:09 [INFO]: New access token obtained successfully
+2025-03-21 08:08:09 [INFO]: Checking data availability
+2025-03-21 08:08:09 [DEBUG]: Calculating bounding box
+2025-03-21 08:08:09 [DEBUG]: Bounding box calculated: [12.4, 41.8, 12.6, 42]
+2025-03-21 08:08:09 [DEBUG]: Found 1 features
+2025-03-21 08:08:09 [INFO]: Processing polarization for band VV
+2025-03-21 08:08:09 [INFO]: Processing polarization for band VH
+2025-03-21 08:08:13 [DEBUG]: Process response received for VV
+2025-03-21 08:08:14 [DEBUG]: Process response received for VH
+2025-03-21 08:08:14 [INFO]: Saving image for band VV and date 2023-10-01
+2025-03-21 08:08:14 [INFO]: Saving image for band VH and date 2023-10-01
+2025-03-21 08:08:14 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VH\2023-10-01_VH_gamma0_terrain.tif
+2025-03-21 08:08:14 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VV\2023-10-01_VV_gamma0_terrain.tif
+2025-03-21 08:23:50 [INFO]: Initializing Copernicus service
+2025-03-21 08:23:50 [INFO]: Initializing Earth Engine
+2025-03-21 08:23:50 [DEBUG]: Earth Engine authentication successful
+2025-03-21 08:23:51 [INFO]: Earth Engine initialized
+2025-03-21 08:24:02 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 08:24:02 [INFO]: Requesting new Copernicus access token
+2025-03-21 08:24:05 [INFO]: New access token obtained successfully
+2025-03-21 08:24:05 [INFO]: Checking data availability
+2025-03-21 08:24:05 [DEBUG]: Calculating bounding box
+2025-03-21 08:24:05 [DEBUG]: Bounding box calculated: [12.4, 41.8, 12.6, 42]
+2025-03-21 08:24:07 [DEBUG]: Found 1 features
+2025-03-21 08:24:07 [INFO]: Processing polarization for band VV
+2025-03-21 08:24:07 [INFO]: Processing polarization for band VH
+2025-03-21 08:24:10 [DEBUG]: Process response received for VV
+2025-03-21 08:24:16 [DEBUG]: Process response received for VH
+2025-03-21 08:24:16 [INFO]: Saving image for band VV and date 2023-10-01
+2025-03-21 08:24:16 [INFO]: Saving image for band VH and date 2023-10-01
+2025-03-21 08:24:16 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VV\2023-10-01_VV_gamma0_terrain.tif
+2025-03-21 08:24:16 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VH\2023-10-01_VH_gamma0_terrain.tif
+2025-03-21 08:25:17 [INFO]: Initializing Copernicus service
+2025-03-21 08:25:17 [INFO]: Initializing Earth Engine
+2025-03-21 08:25:18 [DEBUG]: Earth Engine authentication successful
+2025-03-21 08:25:19 [INFO]: Earth Engine initialized
+2025-03-21 08:25:28 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 08:25:28 [INFO]: Requesting new Copernicus access token
+2025-03-21 08:25:29 [INFO]: New access token obtained successfully
+2025-03-21 08:25:29 [INFO]: Checking data availability
+2025-03-21 08:25:29 [DEBUG]: Calculating bounding box
+2025-03-21 08:25:29 [DEBUG]: Bounding box calculated: [12.4, 41.8, 12.6, 42]
+2025-03-21 08:25:30 [DEBUG]: Found 1 features
+2025-03-21 08:25:30 [INFO]: Processing polarization for band VV
+2025-03-21 08:25:30 [INFO]: Processing polarization for band VH
+2025-03-21 08:25:35 [DEBUG]: Process response received for VV
+2025-03-21 08:25:37 [DEBUG]: Process response received for VH
+2025-03-21 08:25:37 [INFO]: Saving image for band VV and date 2023-10-01
+2025-03-21 08:25:37 [INFO]: Saving image for band VH and date 2023-10-01
+2025-03-21 08:25:37 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VV\2023-10-01_VV_gamma0_terrain.tif
+2025-03-21 08:25:37 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VH\2023-10-01_VH_gamma0_terrain.tif
+2025-03-21 08:29:39 [INFO]: Initializing Copernicus service
+2025-03-21 08:29:39 [INFO]: Initializing Earth Engine
+2025-03-21 08:29:39 [DEBUG]: Earth Engine authentication successful
+2025-03-21 08:29:41 [INFO]: Earth Engine initialized
+2025-03-21 08:29:44 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 08:29:44 [INFO]: Requesting new Copernicus access token
+2025-03-21 08:29:45 [INFO]: New access token obtained successfully
+2025-03-21 08:29:45 [INFO]: Checking data availability
+2025-03-21 08:29:45 [DEBUG]: Calculating bounding box
+2025-03-21 08:29:45 [DEBUG]: Bounding box calculated: [12.4, 41.8, 12.6, 42]
+2025-03-21 08:29:46 [DEBUG]: Found 1 features
+2025-03-21 08:29:46 [INFO]: Processing polarization for band VV
+2025-03-21 08:29:46 [INFO]: Processing polarization for band VH
+2025-03-21 08:29:49 [DEBUG]: Process response received for VV
+2025-03-21 08:29:49 [DEBUG]: Process response received for VH
+2025-03-21 08:29:49 [INFO]: Saving image for band VV and date 2023-10-01
+2025-03-21 08:29:49 [INFO]: Saving image for band VH and date 2023-10-01
+2025-03-21 08:29:49 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VH\2023-10-01_VH_gamma0_terrain.tif
+2025-03-21 08:29:49 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VV\2023-10-01_VV_gamma0_terrain.tif
+2025-03-21 08:33:04 [INFO]: Initializing Copernicus service
+2025-03-21 08:33:04 [INFO]: Initializing Earth Engine
+2025-03-21 08:33:05 [DEBUG]: Earth Engine authentication successful
+2025-03-21 08:33:06 [INFO]: Earth Engine initialized
+2025-03-21 08:33:12 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 08:33:12 [INFO]: Requesting new Copernicus access token
+2025-03-21 08:33:13 [INFO]: New access token obtained successfully
+2025-03-21 08:33:13 [INFO]: Checking data availability
+2025-03-21 08:33:13 [DEBUG]: Calculating bounding box
+2025-03-21 08:33:13 [DEBUG]: Bounding box calculated: [12.4, 41.8, 12.6, 42]
+2025-03-21 08:33:14 [DEBUG]: Found 1 features
+2025-03-21 08:33:14 [INFO]: Processing polarization for band VV
+2025-03-21 08:33:14 [INFO]: Processing polarization for band VH
+2025-03-21 08:33:25 [DEBUG]: Process response received for VV
+2025-03-21 08:33:32 [DEBUG]: Process response received for VH
+2025-03-21 08:33:32 [INFO]: Saving image for band VV and date 2023-10-01
+2025-03-21 08:33:32 [INFO]: Saving image for band VH and date 2023-10-01
+2025-03-21 08:33:32 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VV\2023-10-01_VV_gamma0_terrain.tif
+2025-03-21 08:33:32 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VH\2023-10-01_VH_gamma0_terrain.tif
+2025-03-21 08:34:51 [INFO]: Initializing Copernicus service
+2025-03-21 08:34:51 [INFO]: Initializing Earth Engine
+2025-03-21 08:34:51 [DEBUG]: Earth Engine authentication successful
+2025-03-21 08:34:53 [INFO]: Earth Engine initialized
+2025-03-21 08:34:56 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 08:34:56 [INFO]: Requesting new Copernicus access token
+2025-03-21 08:34:57 [INFO]: New access token obtained successfully
+2025-03-21 08:34:57 [INFO]: Checking data availability
+2025-03-21 08:34:57 [DEBUG]: Calculating bounding box
+2025-03-21 08:34:57 [DEBUG]: Bounding box calculated: [12.4, 41.8, 12.6, 42]
+2025-03-21 08:34:58 [DEBUG]: Found 1 features
+2025-03-21 08:34:58 [INFO]: Processing polarization for band VV
+2025-03-21 08:34:58 [INFO]: Processing polarization for band VH
+2025-03-21 08:35:00 [DEBUG]: Process response received for VV
+2025-03-21 08:35:01 [DEBUG]: Process response received for VH
+2025-03-21 08:35:01 [INFO]: Saving image for band VV and date 2023-10-01
+2025-03-21 08:35:01 [INFO]: Saving image for band VH and date 2023-10-01
+2025-03-21 08:35:01 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VV\2023-10-01_VV_gamma0_terrain.tif
+2025-03-21 08:35:01 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VH\2023-10-01_VH_gamma0_terrain.tif
+2025-03-21 08:36:05 [INFO]: Initializing Copernicus service
+2025-03-21 08:36:05 [INFO]: Initializing Earth Engine
+2025-03-21 08:36:05 [DEBUG]: Earth Engine authentication successful
+2025-03-21 08:36:06 [INFO]: Earth Engine initialized
+2025-03-21 08:36:09 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 08:36:09 [INFO]: Requesting new Copernicus access token
+2025-03-21 08:36:09 [INFO]: New access token obtained successfully
+2025-03-21 08:36:09 [INFO]: Checking data availability
+2025-03-21 08:36:09 [DEBUG]: Calculating bounding box
+2025-03-21 08:36:09 [DEBUG]: Bounding box calculated: [12.4, 41.8, 12.6, 42]
+2025-03-21 08:36:10 [DEBUG]: Found 1 features
+2025-03-21 08:36:10 [INFO]: Processing polarization for band VV
+2025-03-21 08:36:10 [INFO]: Processing polarization for band VH
+2025-03-21 08:36:12 [DEBUG]: Process response received for VH
+2025-03-21 08:36:13 [DEBUG]: Process response received for VV
+2025-03-21 08:36:13 [INFO]: Saving image for band VV and date 2023-10-01
+2025-03-21 08:36:13 [INFO]: Saving image for band VH and date 2023-10-01
+2025-03-21 08:36:13 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VH\2023-10-01_VH_gamma0_terrain.tif
+2025-03-21 08:36:13 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VV\2023-10-01_VV_gamma0_terrain.tif
+2025-03-21 08:36:56 [INFO]: Initializing Copernicus service
+2025-03-21 08:36:56 [INFO]: Initializing Earth Engine
+2025-03-21 08:36:56 [DEBUG]: Earth Engine authentication successful
+2025-03-21 08:36:58 [INFO]: Earth Engine initialized
+2025-03-21 08:37:58 [INFO]: Initializing Copernicus service
+2025-03-21 08:37:59 [INFO]: Initializing Earth Engine
+2025-03-21 08:37:59 [DEBUG]: Earth Engine authentication successful
+2025-03-21 08:38:00 [INFO]: Earth Engine initialized
+2025-03-21 08:38:03 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 08:38:03 [INFO]: Requesting new Copernicus access token
+2025-03-21 08:38:04 [INFO]: New access token obtained successfully
+2025-03-21 08:38:04 [INFO]: Checking data availability
+2025-03-21 08:38:04 [DEBUG]: Calculating bounding box
+2025-03-21 08:38:04 [DEBUG]: Bounding box calculated: [12.4, 41.8, 12.6, 42]
+2025-03-21 08:38:05 [DEBUG]: Found 1 features
+2025-03-21 08:38:05 [INFO]: Processing polarization for band VV
+2025-03-21 08:38:05 [INFO]: Processing polarization for band VH
+2025-03-21 08:38:08 [DEBUG]: Process response received for VV
+2025-03-21 08:38:09 [DEBUG]: Process response received for VH
+2025-03-21 08:38:09 [INFO]: Saving image for band VV and date 2023-10-01
+2025-03-21 08:38:09 [INFO]: Saving image for band VH and date 2023-10-01
+2025-03-21 08:38:09 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VV\2023-10-01_VV_gamma0_terrain.tif
+2025-03-21 08:38:09 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VH\2023-10-01_VH_gamma0_terrain.tif
+2025-03-21 09:09:18 [INFO]: Initializing Copernicus service
+2025-03-21 09:09:18 [INFO]: Initializing Earth Engine
+2025-03-21 09:09:18 [DEBUG]: Earth Engine authentication successful
+2025-03-21 09:09:20 [INFO]: Earth Engine initialized
+2025-03-21 09:09:24 [INFO]: Initializing Copernicus service
+2025-03-21 09:09:24 [INFO]: Initializing Earth Engine
+2025-03-21 09:09:25 [DEBUG]: Earth Engine authentication successful
+2025-03-21 09:09:25 [INFO]: Earth Engine initialized
+2025-03-21 09:09:50 [INFO]: Initializing Copernicus service
+2025-03-21 09:09:50 [INFO]: Initializing Earth Engine
+2025-03-21 09:09:51 [DEBUG]: Earth Engine authentication successful
+2025-03-21 09:09:53 [INFO]: Earth Engine initialized
+2025-03-21 09:09:55 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 09:09:55 [INFO]: Requesting new Copernicus access token
+2025-03-21 09:10:06 [INFO]: New access token obtained successfully
+2025-03-21 09:10:06 [INFO]: Checking data availability
+2025-03-21 09:10:06 [DEBUG]: Calculating bounding box
+2025-03-21 09:10:06 [DEBUG]: Bounding box calculated: [12.4, 41.8, 12.6, 42]
+2025-03-21 09:10:08 [DEBUG]: Found 1 features
+2025-03-21 09:10:08 [INFO]: Processing polarization for band VV
+2025-03-21 09:10:08 [INFO]: Processing polarization for band VH
+2025-03-21 09:10:14 [DEBUG]: Process response received for VH
+2025-03-21 09:10:15 [DEBUG]: Process response received for VV
+2025-03-21 09:10:15 [INFO]: Saving image for band VV and date 2023-10-01
+2025-03-21 09:10:15 [INFO]: Saving image for band VH and date 2023-10-01
+2025-03-21 09:10:15 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VV\2023-10-01_VV_gamma0_terrain.tif
+2025-03-21 09:10:15 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VH\2023-10-01_VH_gamma0_terrain.tif
+2025-03-21 09:10:43 [INFO]: Initializing Copernicus service
+2025-03-21 09:10:43 [INFO]: Initializing Earth Engine
+2025-03-21 09:10:44 [DEBUG]: Earth Engine authentication successful
+2025-03-21 09:10:46 [INFO]: Earth Engine initialized
+2025-03-21 09:11:06 [INFO]: Initializing Copernicus service
+2025-03-21 09:11:06 [INFO]: Initializing Earth Engine
+2025-03-21 09:11:06 [DEBUG]: Earth Engine authentication successful
+2025-03-21 09:11:08 [INFO]: Earth Engine initialized
+2025-03-21 09:33:33 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 09:33:33 [INFO]: Requesting new Copernicus access token
+2025-03-21 09:33:35 [INFO]: New access token obtained successfully
+2025-03-21 09:33:35 [INFO]: Checking data availability
+2025-03-21 09:33:35 [DEBUG]: Calculating bounding box
+2025-03-21 09:33:35 [DEBUG]: Bounding box calculated: [12.4, 41.8, 12.6, 42]
+2025-03-21 09:33:36 [DEBUG]: Found 1 features
+2025-03-21 09:33:36 [INFO]: Processing polarization for band VV
+2025-03-21 09:33:36 [INFO]: Processing polarization for band VH
+2025-03-21 09:33:41 [DEBUG]: Process response received for VV
+2025-03-21 09:33:43 [DEBUG]: Process response received for VH
+2025-03-21 09:33:43 [INFO]: Saving image for band VV and date 2023-10-01
+2025-03-21 09:33:43 [INFO]: Saving image for band VH and date 2023-10-01
+2025-03-21 09:33:43 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VV\2023-10-01_VV_gamma0_terrain.tif
+2025-03-21 09:33:43 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VH\2023-10-01_VH_gamma0_terrain.tif
+2025-03-21 09:45:46 [INFO]: Initializing Copernicus service
+2025-03-21 09:45:46 [INFO]: Initializing Earth Engine
+2025-03-21 09:45:46 [DEBUG]: Earth Engine authentication successful
+2025-03-21 09:45:48 [INFO]: Earth Engine initialized
+2025-03-21 09:45:54 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 09:45:54 [INFO]: Requesting new Copernicus access token
+2025-03-21 09:45:55 [INFO]: New access token obtained successfully
+2025-03-21 09:45:55 [INFO]: Checking data availability
+2025-03-21 09:45:55 [DEBUG]: Calculating bounding box
+2025-03-21 09:45:55 [DEBUG]: Bounding box calculated: [12.4, 41.8, 12.6, 42]
+2025-03-21 09:45:57 [DEBUG]: Found 1 features
+2025-03-21 09:45:57 [INFO]: Processing polarization for band VV
+2025-03-21 09:45:57 [INFO]: Processing polarization for band VH
+2025-03-21 09:46:01 [DEBUG]: Process response received for VV
+2025-03-21 09:46:02 [DEBUG]: Process response received for VH
+2025-03-21 09:46:02 [INFO]: Saving image for band VV and date 2023-10-01
+2025-03-21 09:46:02 [INFO]: Saving image for band VH and date 2023-10-01
+2025-03-21 09:46:02 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VH\2023-10-01_VH_gamma0_terrain.tif
+2025-03-21 09:46:02 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VV\2023-10-01_VV_gamma0_terrain.tif
+2025-03-21 09:49:02 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 09:49:02 [DEBUG]: Using cached access token
+2025-03-21 09:49:02 [INFO]: Checking data availability
+2025-03-21 09:49:02 [DEBUG]: Calculating bounding box
+2025-03-21 09:49:02 [DEBUG]: Bounding box calculated: [12.4, 41.8, 12.6, 42]
+2025-03-21 09:49:04 [DEBUG]: Found 1 features
+2025-03-21 09:49:04 [INFO]: Processing polarization for band VV
+2025-03-21 09:49:04 [INFO]: Processing polarization for band VH
+2025-03-21 09:49:22 [DEBUG]: Process response received for VH
+2025-03-21 09:49:25 [DEBUG]: Process response received for VV
+2025-03-21 09:49:25 [INFO]: Saving image for band VV and date 2023-10-01
+2025-03-21 09:49:25 [INFO]: Saving image for band VH and date 2023-10-01
+2025-03-21 09:49:25 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VH\2023-10-01_VH_gamma0_terrain.tif
+2025-03-21 09:49:25 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VV\2023-10-01_VV_gamma0_terrain.tif
+2025-03-21 09:50:24 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 09:50:24 [DEBUG]: Using cached access token
+2025-03-21 09:50:24 [INFO]: Checking data availability
+2025-03-21 09:50:24 [DEBUG]: Calculating bounding box
+2025-03-21 09:50:24 [DEBUG]: Bounding box calculated: [12.4, 41.8, 12.6, 42]
+2025-03-21 09:50:30 [DEBUG]: Found 1 features
+2025-03-21 09:50:30 [INFO]: Processing polarization for band VV
+2025-03-21 09:50:30 [INFO]: Processing polarization for band VH
+2025-03-21 09:50:41 [DEBUG]: Process response received for VV
+2025-03-21 09:51:01 [DEBUG]: Process response received for VH
+2025-03-21 09:51:01 [INFO]: Saving image for band VV and date 2023-10-01
+2025-03-21 09:51:01 [INFO]: Saving image for band VH and date 2023-10-01
+2025-03-21 09:51:01 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VV\2023-10-01_VV_gamma0_terrain.tif
+2025-03-21 09:51:01 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VH\2023-10-01_VH_gamma0_terrain.tif
+2025-03-21 09:55:42 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 09:55:42 [DEBUG]: Using cached access token
+2025-03-21 09:55:42 [INFO]: Checking data availability
+2025-03-21 09:55:42 [DEBUG]: Calculating bounding box
+2025-03-21 09:55:42 [DEBUG]: Bounding box calculated: [12.4, 41.8, 12.6, 42]
+2025-03-21 09:55:42 [DEBUG]: Found 1 features
+2025-03-21 09:55:42 [INFO]: Processing polarization for band VV
+2025-03-21 09:55:42 [INFO]: Processing polarization for band VH
+2025-03-21 09:55:52 [DEBUG]: Process response received for VH
+2025-03-21 09:55:53 [DEBUG]: Process response received for VV
+2025-03-21 09:55:53 [INFO]: Saving image for band VV and date 2023-10-01
+2025-03-21 09:55:53 [INFO]: Saving image for band VH and date 2023-10-01
+2025-03-21 09:55:53 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VV\2023-10-01_VV_gamma0_terrain.tif
+2025-03-21 09:55:53 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VH\2023-10-01_VH_gamma0_terrain.tif
+2025-03-21 10:00:40 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 10:00:40 [INFO]: Requesting new Copernicus access token
+2025-03-21 10:00:43 [INFO]: New access token obtained successfully
+2025-03-21 10:00:43 [INFO]: Checking data availability
+2025-03-21 10:00:43 [DEBUG]: Calculating bounding box
+2025-03-21 10:00:43 [DEBUG]: Bounding box calculated: [12.4, 41.8, 12.6, 42]
+2025-03-21 10:00:44 [DEBUG]: Found 1 features
+2025-03-21 10:00:44 [INFO]: Processing polarization for band VV
+2025-03-21 10:00:44 [INFO]: Processing polarization for band VH
+2025-03-21 10:00:47 [DEBUG]: Process response received for VH
+2025-03-21 10:00:47 [DEBUG]: Process response received for VV
+2025-03-21 10:00:47 [INFO]: Saving image for band VV and date 2023-10-01
+2025-03-21 10:00:47 [INFO]: Saving image for band VH and date 2023-10-01
+2025-03-21 10:00:47 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VH\2023-10-01_VH_gamma0_terrain.tif
+2025-03-21 10:00:47 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VV\2023-10-01_VV_gamma0_terrain.tif
+2025-03-21 10:01:31 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 10:01:31 [DEBUG]: Using cached access token
+2025-03-21 10:01:31 [INFO]: Checking data availability
+2025-03-21 10:01:31 [DEBUG]: Calculating bounding box
+2025-03-21 10:01:31 [DEBUG]: Bounding box calculated: [12.4, 41.8, 12.6, 42]
+2025-03-21 10:01:32 [DEBUG]: Found 1 features
+2025-03-21 10:01:32 [INFO]: Processing polarization for band VV
+2025-03-21 10:01:32 [INFO]: Processing polarization for band VH
+2025-03-21 10:01:36 [DEBUG]: Process response received for VH
+2025-03-21 10:01:36 [DEBUG]: Process response received for VV
+2025-03-21 10:01:36 [INFO]: Saving image for band VV and date 2023-10-01
+2025-03-21 10:01:36 [INFO]: Saving image for band VH and date 2023-10-01
+2025-03-21 10:01:36 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VH\2023-10-01_VH_gamma0_terrain.tif
+2025-03-21 10:01:36 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VV\2023-10-01_VV_gamma0_terrain.tif
+2025-03-21 10:06:49 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 10:06:49 [DEBUG]: Using cached access token
+2025-03-21 10:06:49 [INFO]: Checking data availability
+2025-03-21 10:06:49 [DEBUG]: Calculating bounding box
+2025-03-21 10:06:49 [DEBUG]: Bounding box calculated: [12.4, 41.8, 12.6, 42]
+2025-03-21 10:06:52 [DEBUG]: Found 1 features
+2025-03-21 10:06:52 [INFO]: Processing polarization for band VV
+2025-03-21 10:06:52 [INFO]: Processing polarization for band VH
+2025-03-21 10:06:58 [DEBUG]: Process response received for VH
+2025-03-21 10:07:06 [DEBUG]: Process response received for VV
+2025-03-21 10:07:06 [INFO]: Saving image for band VV and date 2023-10-01
+2025-03-21 10:07:06 [INFO]: Saving image for band VH and date 2023-10-01
+2025-03-21 10:07:06 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VH\2023-10-01_VH_gamma0_terrain.tif
+2025-03-21 10:07:06 [DEBUG]: Image saved at: C:\Users\rishi\OneDrive\Desktop\Desktop Folders\BE Project 2024-25\backend\image_dump\VV\2023-10-01_VV_gamma0_terrain.tif
+2025-03-21 10:46:40 [INFO]: Initializing Copernicus service
+2025-03-21 10:46:40 [INFO]: Initializing Earth Engine
+2025-03-21 10:46:41 [DEBUG]: Earth Engine authentication successful
+2025-03-21 10:46:47 [INFO]: Earth Engine initialized
+2025-03-21 11:11:41 [INFO]: Initializing Copernicus service
+2025-03-21 11:11:41 [INFO]: Initializing Earth Engine
+2025-03-21 11:11:42 [DEBUG]: Earth Engine authentication successful
+2025-03-21 11:11:57 [INFO]: Earth Engine initialized
+2025-03-21 11:12:58 [INFO]: Initializing Copernicus service
+2025-03-21 11:12:58 [INFO]: Initializing Earth Engine
+2025-03-21 11:12:59 [DEBUG]: Earth Engine authentication successful
+2025-03-21 11:13:07 [INFO]: Earth Engine initialized
+2025-03-21 11:15:43 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 11:15:43 [WARN]: Invalid GeoJSON structure detected
+2025-03-21 11:19:53 [INFO]: Initializing Copernicus service
+2025-03-21 11:19:53 [INFO]: Initializing Earth Engine
+2025-03-21 11:19:54 [DEBUG]: Earth Engine authentication successful
+2025-03-21 11:20:06 [INFO]: Earth Engine initialized
+2025-03-21 11:20:37 [INFO]: Initializing Copernicus service
+2025-03-21 11:20:37 [INFO]: Initializing Earth Engine
+2025-03-21 11:20:37 [DEBUG]: Earth Engine authentication successful
+2025-03-21 11:20:49 [INFO]: Earth Engine initialized
+2025-03-21 11:22:20 [INFO]: Initializing Copernicus service
+2025-03-21 11:22:20 [INFO]: Initializing Earth Engine
+2025-03-21 11:22:20 [DEBUG]: Earth Engine authentication successful
+2025-03-21 11:22:34 [INFO]: Earth Engine initialized
+2025-03-21 11:22:36 [INFO]: Flood comparison request received
+2025-03-21 11:22:36 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 11:22:36 [WARN]: Invalid GeoJSON structure detected
+2025-03-21 11:22:44 [INFO]: Flood comparison request received
+2025-03-21 11:22:44 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 11:22:44 [WARN]: Invalid GeoJSON structure detected
+2025-03-21 11:23:53 [INFO]: Flood comparison request received
+2025-03-21 11:23:53 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 11:23:53 [WARN]: Invalid GeoJSON structure detected
+2025-03-21 11:27:00 [INFO]: Flood comparison request received
+2025-03-21 11:27:00 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 11:27:00 [WARN]: Invalid GeoJSON structure detected
+2025-03-21 11:27:11 [INFO]: Flood comparison request received
+2025-03-21 11:27:11 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 11:27:11 [WARN]: Invalid GeoJSON structure detected
+2025-03-21 11:28:30 [INFO]: Flood comparison request received
+2025-03-21 11:28:30 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 11:28:30 [WARN]: Invalid GeoJSON structure detected
+2025-03-21 11:29:02 [INFO]: Initializing Copernicus service
+2025-03-21 11:29:02 [INFO]: Initializing Earth Engine
+2025-03-21 11:29:03 [DEBUG]: Earth Engine authentication successful
+2025-03-21 11:29:15 [INFO]: Earth Engine initialized
+2025-03-21 11:29:21 [INFO]: Initializing Copernicus service
+2025-03-21 11:29:21 [INFO]: Initializing Earth Engine
+2025-03-21 11:29:22 [DEBUG]: Earth Engine authentication successful
+2025-03-21 11:29:30 [INFO]: Earth Engine initialized
+2025-03-21 11:29:35 [INFO]: Flood comparison request received
+2025-03-21 11:29:35 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 11:29:35 [WARN]: Invalid GeoJSON structure detected
+2025-03-21 11:35:57 [INFO]: Initializing Copernicus service
+2025-03-21 11:35:57 [INFO]: Initializing Earth Engine
+2025-03-21 11:35:59 [DEBUG]: Earth Engine authentication successful
+2025-03-21 11:36:08 [INFO]: Earth Engine initialized
+2025-03-21 11:37:34 [INFO]: Initializing Copernicus service
+2025-03-21 11:37:34 [INFO]: Initializing Earth Engine
+2025-03-21 11:37:35 [DEBUG]: Earth Engine authentication successful
+2025-03-21 11:37:39 [INFO]: Earth Engine initialized
+2025-03-21 11:38:30 [INFO]: Flood comparison request received
+2025-03-21 11:38:30 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 11:38:30 [WARN]: Invalid GeoJSON structure detected
+2025-03-21 11:38:52 [INFO]: Flood comparison request received
+2025-03-21 11:38:52 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 11:38:52 [WARN]: Invalid GeoJSON structure detected
+2025-03-21 11:39:05 [INFO]: Flood comparison request received
+2025-03-21 11:39:05 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 11:39:05 [WARN]: Invalid GeoJSON structure detected
+2025-03-21 11:39:28 [INFO]: Flood comparison request received
+2025-03-21 11:39:28 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 11:39:28 [WARN]: Invalid GeoJSON structure detected
+2025-03-21 11:40:12 [INFO]: Initializing Copernicus service
+2025-03-21 11:40:12 [INFO]: Initializing Earth Engine
+2025-03-21 11:40:14 [DEBUG]: Earth Engine authentication successful
+2025-03-21 11:40:21 [INFO]: Earth Engine initialized
+2025-03-21 11:41:04 [INFO]: Flood comparison request received
+2025-03-21 11:41:04 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 11:41:04 [INFO]: Requesting new Copernicus access token
+2025-03-21 11:41:06 [INFO]: New access token obtained successfully
+2025-03-21 11:41:06 [INFO]: Checking data availability
+2025-03-21 11:41:06 [DEBUG]: Calculating bounding box
+2025-03-21 11:41:06 [DEBUG]: Bounding box calculated: [106.62192040071821, -6.3832581482052655, 106.95151024446821, -6.185327606919721]
+2025-03-21 11:41:08 [DEBUG]: Found 0 features
+2025-03-21 11:44:13 [INFO]: Initializing Copernicus service
+2025-03-21 11:44:13 [INFO]: Initializing Earth Engine
+2025-03-21 11:44:14 [DEBUG]: Earth Engine authentication successful
+2025-03-21 11:44:18 [INFO]: Earth Engine initialized
+2025-03-21 11:44:27 [INFO]: Initializing Copernicus service
+2025-03-21 11:44:27 [INFO]: Initializing Earth Engine
+2025-03-21 11:44:28 [DEBUG]: Earth Engine authentication successful
+2025-03-21 11:44:48 [INFO]: Earth Engine initialized
+2025-03-21 11:44:57 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 11:44:57 [INFO]: Requesting new Copernicus access token
+2025-03-21 11:44:58 [INFO]: New access token obtained successfully
+2025-03-21 11:47:08 [INFO]: Initializing Copernicus service
+2025-03-21 11:47:08 [INFO]: Initializing Earth Engine
+2025-03-21 11:47:09 [DEBUG]: Earth Engine authentication successful
+2025-03-21 11:47:23 [INFO]: Earth Engine initialized
+2025-03-21 11:47:53 [INFO]: Initializing Copernicus service
+2025-03-21 11:47:53 [INFO]: Initializing Earth Engine
+2025-03-21 11:47:53 [DEBUG]: Earth Engine authentication successful
+2025-03-21 11:48:02 [INFO]: Earth Engine initialized
+2025-03-21 11:48:15 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 11:48:15 [WARN]: Invalid GeoJSON structure detected
+2025-03-21 11:49:44 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 11:49:44 [WARN]: Invalid GeoJSON structure detected
+2025-03-21 11:53:04 [INFO]: Initializing Copernicus service
+2025-03-21 11:53:04 [INFO]: Initializing Earth Engine
+2025-03-21 11:53:05 [DEBUG]: Earth Engine authentication successful
+2025-03-21 11:53:13 [INFO]: Earth Engine initialized
+2025-03-21 11:53:26 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 11:53:26 [WARN]: Invalid GeoJSON structure detected
+2025-03-21 11:53:33 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 11:53:33 [WARN]: Invalid GeoJSON structure detected
+2025-03-21 11:55:15 [INFO]: Initializing Copernicus service
+2025-03-21 11:55:15 [INFO]: Initializing Earth Engine
+2025-03-21 11:55:16 [DEBUG]: Earth Engine authentication successful
+2025-03-21 11:55:18 [INFO]: Earth Engine initialized
+2025-03-21 11:58:10 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 11:58:16 [DEBUG]: Validating GeoJSON geometry
+2025-03-21 11:59:07 [INFO]: Initializing Copernicus service
+2025-03-21 11:59:07 [INFO]: Initializing Earth Engine
+2025-03-21 11:59:08 [DEBUG]: Earth Engine authentication successful
+2025-03-21 11:59:12 [INFO]: Earth Engine initialized
+2025-03-21 11:59:49 [INFO]: Initializing Copernicus service
+2025-03-21 11:59:49 [INFO]: Initializing Earth Engine
+2025-03-21 11:59:50 [DEBUG]: Earth Engine authentication successful
+2025-03-21 11:59:54 [INFO]: Earth Engine initialized
+2025-03-21 12:01:28 [INFO]: Initializing Copernicus service
+2025-03-21 12:01:28 [INFO]: Initializing Earth Engine
+2025-03-21 12:01:29 [DEBUG]: Earth Engine authentication successful
+2025-03-21 12:01:33 [INFO]: Earth Engine initialized
+2025-03-21 12:02:03 [INFO]: Initializing Copernicus service
+2025-03-21 12:02:03 [INFO]: Initializing Earth Engine
+2025-03-21 12:02:04 [DEBUG]: Earth Engine authentication successful
+2025-03-21 12:02:15 [INFO]: Earth Engine initialized
+2025-03-21 12:05:22 [INFO]: Initializing Copernicus service
+2025-03-21 12:05:22 [INFO]: Initializing Earth Engine
+2025-03-21 12:05:23 [DEBUG]: Earth Engine authentication successful
+2025-03-21 12:05:29 [INFO]: Earth Engine initialized
+2025-03-21 12:15:57 [INFO]: Initializing Copernicus service
+2025-03-21 12:15:57 [INFO]: Initializing Earth Engine
+2025-03-21 12:15:58 [DEBUG]: Earth Engine authentication successful
+2025-03-21 12:15:59 [INFO]: Earth Engine initialized
+2025-03-22 16:11:34 [INFO]: Initializing Copernicus service
+2025-03-22 16:11:34 [INFO]: Initializing Earth Engine
+2025-03-22 16:11:34 [DEBUG]: Earth Engine authentication successful
+2025-03-22 16:11:36 [INFO]: Earth Engine initialized
+2025-03-22 17:15:27 [INFO]: Initializing Copernicus service
+2025-03-22 17:15:27 [INFO]: Initializing Earth Engine
+2025-03-22 17:15:27 [DEBUG]: Earth Engine authentication successful
+2025-03-31 23:54:22 [INFO]: Initializing Copernicus service
+2025-03-31 23:54:22 [INFO]: Initializing Earth Engine
+2025-03-31 23:54:22 [DEBUG]: Earth Engine authentication successful
+2025-03-31 23:54:24 [INFO]: Earth Engine initialized
+2025-04-01 00:45:11 [INFO]: Initializing Copernicus service
+2025-04-01 00:45:11 [INFO]: Initializing Earth Engine
+2025-04-01 00:45:12 [DEBUG]: Earth Engine authentication successful
+2025-04-01 14:06:42 [INFO]: Initializing Copernicus service
+2025-04-01 14:06:42 [INFO]: Initializing Earth Engine
+2025-04-01 14:06:43 [DEBUG]: Earth Engine authentication successful
+2025-04-01 14:06:47 [INFO]: Earth Engine initialized
+2025-04-01 19:29:58 [INFO]: Initializing Copernicus service
+2025-04-01 19:29:58 [INFO]: Initializing Earth Engine
+2025-04-01 19:29:58 [DEBUG]: Earth Engine authentication successful

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {logger} from '../utils/logger.js';
+import { logger } from '../utils/logger.js';
 import { calculateBbox } from '../utils/geojson_utils.js';
 
 let accessToken = null;
@@ -18,7 +18,7 @@ export class CopernicusService {
     }
 
     logger.info('Requesting new Copernicus access token');
-    
+
     try {
       const response = await axios.post(
         'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token',
@@ -44,7 +44,7 @@ export class CopernicusService {
 
   async checkDataAvailability(token, geometry, date) {
     logger.info('Checking data availability', { date });
-    
+
     try {
       const bbox = calculateBbox(geometry);
       const response = await axios.post(
@@ -67,25 +67,87 @@ export class CopernicusService {
 
   async processPolarization(token, geometry, date, band) {
     logger.info(`Processing polarization for band ${band}`, { date });
-    
-    const evalscript = `...`; // Keep your existing evalscript
+
+    const evalscript = `
+      //VERSION=3
+      function setup() {
+        return {
+          input: ["${band}"], // Remove "s1:" prefix
+          output: { bands: 1, sampleType: "FLOAT32" }
+        };
+      }
+      function evaluatePixel(sample) {
+        return [sample.${band}]; // Access band directly
+      }
+    `;
+
 
     try {
+
       const response = await axios.post(
         'https://sh.dataspace.copernicus.eu/api/v1/process',
-        { /* request body */ },
-        { /* headers */ }
+        {
+          input: {
+            bounds: { geometry, properties: { crs: "http://www.opengis.net/def/crs/EPSG/0/4326" } },
+            data: [{
+              type: "S1GRD",
+              dataFilter: {
+                timeRange: { from: `${date}T00:00:00Z`, to: `${date}T23:59:59Z` },
+                polarization: "DV",
+                acquisitionMode: "IW",
+                resolution: "HIGH" // Required for IW mode
+              },
+              processing: {
+                backCoeff: "GAMMA0_TERRAIN",
+                orthorectify: true, // Mandatory for GAMMA0_TERRAIN
+                demInstance: "COPERNICUS_30",
+                speckleFilter: { type: "LEE", windowSizeX: 5, windowSizeY: 5 }
+              }
+            }]
+          },
+          output: { width: 512, height: 512, format: "TIFF" },
+          evalscript
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            Accept: "image/tiff"
+          },
+          responseType: "arraybuffer"
+        }
       );
 
+      
       logger.debug(`Process response received for ${band}`, {
         status: response.status,
         headers: response.headers
       });
 
+      // Check for TIFF content type
+      if (response.headers['content-type'] !== 'image/tiff') {
+        throw new Error(`Unexpected response type: ${response.headers['content-type']}`);
+      }
+
       return Buffer.from(response.data);
+
     } catch (error) {
+
       logger.error(`Polarization processing failed for ${band}`, { error });
-      throw error;
+
+      let errorMessage;
+      if (error.response?.data) {
+        try {
+          const errorData = JSON.parse(Buffer.from(error.response.data).toString());
+          errorMessage = errorData.message || errorData.error;
+        } catch {
+          errorMessage = Buffer.from(error.response.data).toString();
+        }
+      } else {
+        errorMessage = error.message;
+      }
+      console.error(`Process Error (${band}):`, errorMessage);
+      throw new Error(`Failed to process ${band}`);
     }
   }
 }
