@@ -1,6 +1,8 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { GoogleMap, Marker, Polygon, Polyline, InfoWindow, GroundOverlay, useJsApiLoader, OverlayView } from '@react-google-maps/api';
 
+import React, { useState, useCallback, useEffect } from 'react';
+import { GoogleMap, Marker, Polygon, Polyline, InfoWindow, GroundOverlay, useJsApiLoader } from '@react-google-maps/api';
 import axios from 'axios';
 import PolygonList from './PolygonList';
 import LayerCheckbox from './LayerCheckBox';
@@ -14,6 +16,16 @@ function MapContainer({
   rescueMarkers,
   setRescueMarkers,
 }) {
+const mapStyles = [
+  { featureType: 'all', elementType: 'labels', stylers: [{ visibility: 'off' }] },
+  { featureType: 'road', elementType: 'geometry', stylers: [{ visibility: 'on' }] },
+  { featureType: 'poi.medical', elementType: 'geometry', stylers: [{ visibility: 'on' }] },
+  { featureType: 'poi.gas_station', elementType: 'geometry', stylers: [{ visibility: 'on' }] },
+  { featureType: 'administrative', elementType: 'labels', stylers: [{ visibility: 'on' }] },
+  { featureType: 'road', elementType: 'labels', stylers: [{ visibility: 'on' }] }
+];
+
+function MapContainer() {
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: 'AIzaSyBzHWL78g-ZvWNYE3Bki8oi31Y-35ZwTZY',
@@ -45,6 +57,33 @@ function MapContainer({
   const [activeMarker, setActiveMarker] = useState(null);
   const [showingInfoWindow, setShowingInfoWindow] = useState(false);
 
+  const [isContourLoading, setIsContourLoading] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      setContourLinesOverlay(null);
+      setShowContourLinesOverlay(false);
+    };
+  }, []);
+
+  const fetchCountourMappings = async (polygon) => {
+    try {
+      const response = await axios.post('http://localhost:3000/agency/fetch-contour-image', {
+        geometry: polygon,
+      });
+  
+      if (Array.isArray(response.data)) {
+        setLocationMappings(response.data);
+        setShowLocationMappings(true);
+      } else {
+        console.error('Unexpected response format:', response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching location mappings:', error);
+      throw error;
+    }
+  };
+
   const layerConfig = [
     { label: 'Gas Stations', state: showGasStations, setState: setShowGasStations },
     { label: 'Hospitals', state: showHospitals, setState: setShowHospitals },
@@ -55,12 +94,36 @@ function MapContainer({
 
 
   const handleFetchContourLines = async (polygon) => {
+    if (!polygon?.coords || polygon.coords.length < 3) {
+      alert('Please draw and select a valid polygon first');
+      return;
+    }
+
     try {
+      setIsContourLoading(true);
       const response = await axios.post('http://localhost:3000/agency/fetch-contour-lines', {
         geometry: polygon,
       });
-      const { contourLineUrl } = response.data;
+      
+      if (!response.data.contourLineUrl) {
+        throw new Error('No contour data received');
+      }
 
+      // Fix 3: Convert coordinates properly
+      const coords = polygon.coords;
+      const bounds = new window.google.maps.LatLngBounds();
+      coords.forEach(coord => bounds.extend(new window.google.maps.LatLng(coord.lat, coord.lng)));
+      
+      setContourLinesOverlay({
+        url: response.data.contourLineUrl,
+        bounds: {
+          north: bounds.getNorthEast().lat(),
+          south: bounds.getSouthWest().lat(),
+          east: bounds.getNorthEast().lng(),
+          west: bounds.getSouthWest().lng(),
+        }
+      });
+      
       const lats = polygon.coords.map(c => c.lat);
       const lngs = polygon.coords.map(c => c.lng);
       const bounds = {
@@ -73,7 +136,30 @@ function MapContainer({
       setContourLinesOverlay({ url: contourLineUrl, bounds });
       setShowContourLinesOverlay(true);
     } catch (error) {
-      console.error('Error fetching contour lines:', error);
+      console.error('Contour error:', error);
+      alert(`Contour Error: ${error.message || 'Failed to generate contours'}`);
+    } finally {
+      setIsContourLoading(false);
+    }
+  };
+
+  const handleProcessImage = async () => {
+    setIsProcessing(true);
+    try {
+      const mapElement = document.querySelector('.google-map-container');
+      const canvas = await html2canvas(mapElement);
+      const imageData = canvas.toDataURL('image/png').split(',')[1];
+
+      const response = await axios.post('http://localhost:5000/process-image', {
+        image: imageData
+      });
+
+      setProcessedImage(response.data.processed_image);
+    } catch (error) {
+      console.error('Image processing error:', error);
+      alert('Failed to process image');
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -268,8 +354,8 @@ function MapContainer({
           backgroundColor: "var(--color-light-tertiary)"
         }}
       >
-        {renderMarkers(gasStations, 'gas', GAS_ICON_URL, showGasStations)}
-        {renderMarkers(hospitals, 'hospital', HOSPITAL_ICON_URL, showHospitals)}
+        {renderMarkers(gasStations, "gas", GAS_ICON_URL, showGasStations)}
+        {renderMarkers(hospitals, "hospital", HOSPITAL_ICON_URL, showHospitals)}
         {renderLocationMappingsMarkers()}
         {renderPolygons()}
         {renderDrawingPolyline()}
@@ -326,6 +412,7 @@ function MapContainer({
 
         {showContourLinesOverlay && contourLinesOverlay && (
           <GroundOverlay
+            key="contour-overlay"
             url={contourLinesOverlay.url}
             bounds={contourLinesOverlay.bounds}
             options={{ opacity: 0.4 }}
@@ -402,9 +489,54 @@ function MapContainer({
                 Fetch Location Mappings From GEE
               </button>
             </div>
+          )}
+          <div className="px-4 py-2 bg-light-primary dark:bg-dark-primary bg-opacity-80 rounded-lg">
+            <ToggleSwitch
+              label="Flood Mapping"
+              checked={showFloodMappingOverlay}
+              onChange={() =>
+                setShowFloodMappingOverlay(!showFloodMappingOverlay)
+              }
+              checkboxClass="h-4 w-4 text-light-accent dark:text-dark-accent"
+              labelClass="text-light-accent dark:text-dark-accent font-medium"
+            />
+          </div>
+          <div className="px-4 py-2 bg-light-primary dark:bg-dark-primary bg-opacity-80 rounded-lg">
+            <ToggleSwitch
+              label="Contour Lines"
+              checked={showContourLinesOverlay}
+              onChange={() =>
+                setShowContourLinesOverlay(!showContourLinesOverlay)
+              }
+              checkboxClass="h-4 w-4 text-light-accent dark:text-dark-accent"
+              labelClass="text-light-accent dark:text-dark-accent font-medium"
+            />
+          </div>
+        </div>
+      </div>
+            </div>
           </div>
         </div>
 
+      <div className="absolute top-0 right-0 m-2 z-10">
+        <button
+          // onClick={fetchLocationMappings}
+          onClick={handleFetchContourLines}
+          className="px-4 py-2 bg-light-primary dark:bg-dark-primary bg-opacity-80 rounded-lg text-light-text-inverted dark:text-dark-text-inverted"
+        >
+          Fetch Location Mappings
+        </button>
+      </div>
+
+      <PolygonList
+        polygons={polygons}
+        togglePolygonVisibility={togglePolygonVisibility}
+        deletePolygon={deletePolygon}
+        // handlePolygonRequest={handlePolygonRequest}
+        handlePolygonRequest={handleFetchContourLines}
+        handleFetchContourLines={handleFetchContourLines} // Ensure proper prop name
+        handleContourRequest={fetchCountourMappings}
+      />
         <div className="fixed bottom-15 left-4 max-w-xl z-10">
           <div className="bg-light-tertiary dark:bg-dark-primary shadow-lg rounded-md max-h-50 border border-light-secondary dark:border-dark-secondary">
             <div className="p-3 bg-light-secondary dark:bg-dark-secondary border-b border-light-secondary dark:border-dark-secondary overflow-hidden">

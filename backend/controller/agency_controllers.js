@@ -165,11 +165,9 @@ const agencyController = {
     },
 
     fetchFloodMapping: async (req, res) => {
-
         try {
             const { geometry } = req.body;
             console.log('Received geometry:', geometry);
-
 
             if (!geometry || !geometry.coords || !Array.isArray(geometry.coords) || geometry.coords.length < 3) {
                 return res.status(400).json({ error: "Invalid geometry provided" });

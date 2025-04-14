@@ -1,6 +1,6 @@
 import React from 'react'
 
-function PolygonList({ polygons, togglePolygonVisibility, deletePolygon, handlePolygonRequest }) {
+function PolygonList({ polygons, togglePolygonVisibility, deletePolygon, handlePolygonRequest, handleContourRequest = null }) {
     return (
         <>
             {

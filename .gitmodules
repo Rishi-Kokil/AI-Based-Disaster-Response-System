@@ -1,0 +1,3 @@
+[submodule "EmergeSense-User-App"]
+	path = EmergeSense-User-App
+	url = https://github.com/Ilham-Syed/EmergeSense-User-App
