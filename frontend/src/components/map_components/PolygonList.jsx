@@ -29,9 +29,15 @@ function PolygonList({ polygons, togglePolygonVisibility, deletePolygon, handleP
                                 </button>
                                 <button
                                     onClick={() => handlePolygonRequest(polygon)}
-                                    className="text-light-accent dark:text-dark-accent ml-2"
+                                    className="text-light-accent dark:text-dark-accent ml-2 cursor-pointer"
                                 >
-                                    Request
+                                    Request Flood Mapping
+                                </button>
+                                <button
+                                    onClick={() => handleContourRequest(polygon)}
+                                    className="text-light-accent dark:text-dark-accent ml-2 cursor-pointer"
+                                >
+                                    Request Contor
                                 </button>
                             </li>
                         ))}

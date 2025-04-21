@@ -1,13 +1,10 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { GoogleMap, Marker, Polygon, Polyline, InfoWindow, GroundOverlay, useJsApiLoader, OverlayView } from '@react-google-maps/api';
-
-import React, { useState, useCallback, useEffect } from 'react';
-import { GoogleMap, Marker, Polygon, Polyline, InfoWindow, GroundOverlay, useJsApiLoader } from '@react-google-maps/api';
 import axios from 'axios';
 import PolygonList from './PolygonList';
 import LayerCheckbox from './LayerCheckBox';
 import RescueMarker from './RescueMarker';
-
+import ToggleSwitch from './ToggleSwitch';
 const initialCenter = { lat: -6.30, lng: 106.80 };
 const GAS_ICON_URL = "https://cdn-icons-png.flaticon.com/512/5193/5193677.png";
 const HOSPITAL_ICON_URL = "https://cdn-icons-png.flaticon.com/512/7928/7928713.png";
@@ -16,16 +13,15 @@ function MapContainer({
   rescueMarkers,
   setRescueMarkers,
 }) {
-const mapStyles = [
-  { featureType: 'all', elementType: 'labels', stylers: [{ visibility: 'off' }] },
-  { featureType: 'road', elementType: 'geometry', stylers: [{ visibility: 'on' }] },
-  { featureType: 'poi.medical', elementType: 'geometry', stylers: [{ visibility: 'on' }] },
-  { featureType: 'poi.gas_station', elementType: 'geometry', stylers: [{ visibility: 'on' }] },
-  { featureType: 'administrative', elementType: 'labels', stylers: [{ visibility: 'on' }] },
-  { featureType: 'road', elementType: 'labels', stylers: [{ visibility: 'on' }] }
-];
+  const mapStyles = [
+    { featureType: 'all', elementType: 'labels', stylers: [{ visibility: 'off' }] },
+    { featureType: 'road', elementType: 'geometry', stylers: [{ visibility: 'on' }] },
+    { featureType: 'poi.medical', elementType: 'geometry', stylers: [{ visibility: 'on' }] },
+    { featureType: 'poi.gas_station', elementType: 'geometry', stylers: [{ visibility: 'on' }] },
+    { featureType: 'administrative', elementType: 'labels', stylers: [{ visibility: 'on' }] },
+    { featureType: 'road', elementType: 'labels', stylers: [{ visibility: 'on' }] }
+  ];
 
-function MapContainer() {
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: 'AIzaSyBzHWL78g-ZvWNYE3Bki8oi31Y-35ZwTZY',
@@ -71,7 +67,7 @@ function MapContainer() {
       const response = await axios.post('http://localhost:3000/agency/fetch-contour-image', {
         geometry: polygon,
       });
-  
+
       if (Array.isArray(response.data)) {
         setLocationMappings(response.data);
         setShowLocationMappings(true);
@@ -92,8 +88,8 @@ function MapContainer() {
     { label: 'Rescue Points', state: showRescueMarkers, setState: setShowRescueMarkers },
   ];
 
-
   const handleFetchContourLines = async (polygon) => {
+    
     if (!polygon?.coords || polygon.coords.length < 3) {
       alert('Please draw and select a valid polygon first');
       return;
@@ -104,7 +100,7 @@ function MapContainer() {
       const response = await axios.post('http://localhost:3000/agency/fetch-contour-lines', {
         geometry: polygon,
       });
-      
+
       if (!response.data.contourLineUrl) {
         throw new Error('No contour data received');
       }
@@ -113,7 +109,7 @@ function MapContainer() {
       const coords = polygon.coords;
       const bounds = new window.google.maps.LatLngBounds();
       coords.forEach(coord => bounds.extend(new window.google.maps.LatLng(coord.lat, coord.lng)));
-      
+
       setContourLinesOverlay({
         url: response.data.contourLineUrl,
         bounds: {
@@ -123,15 +119,6 @@ function MapContainer() {
           west: bounds.getSouthWest().lng(),
         }
       });
-      
-      const lats = polygon.coords.map(c => c.lat);
-      const lngs = polygon.coords.map(c => c.lng);
-      const bounds = {
-        north: Math.max(...lats),
-        south: Math.min(...lats),
-        east: Math.max(...lngs),
-        west: Math.min(...lngs),
-      };
 
       setContourLinesOverlay({ url: contourLineUrl, bounds });
       setShowContourLinesOverlay(true);
@@ -420,145 +407,130 @@ function MapContainer() {
         )}
       </GoogleMap>
 
-
-      <>
-        <div className="absolute top-5 left-4 z-10">
-          <div
-            className='flex flex-col gap-2'
-          >
-            <div className="bg-light-tertiary dark:bg-dark-primary shadow-md rounded-md overflow-hidden border border-light-secondary dark:border-dark-secondary">
-              <div className="p-3 bg-light-secondary dark:bg-dark-secondary border-b border-light-secondary dark:border-dark-secondary">
-                <h3 className="text-sm font-medium text-light-text-primary dark:text-dark-text-primary">
-                  Map Layers
-                </h3>
-              </div>
-              <div className="p-3 space-y-2">
-                {layerConfig.map((layer, index) => (
-                  <LayerCheckbox
-                    key={index}
-                    label={layer.label}
-                    checked={layer.state}
-                    onChange={() => layer.setState(!layer.state)}
-                  />
-                ))}
-              </div>
-            </div>
-            <button
-              className='text-sm font-medium rounded-sm p-2 '
-            >
-              Clear Rescue Markers
-            </button>
-          </div>
-        </div>
-
-        <div className="absolute top-72 left-4 z-10">
+      <div className="absolute top-5 left-4 z-10">
+        <div className='flex flex-col gap-2'>
           <div className="bg-light-tertiary dark:bg-dark-primary shadow-md rounded-md overflow-hidden border border-light-secondary dark:border-dark-secondary">
             <div className="p-3 bg-light-secondary dark:bg-dark-secondary border-b border-light-secondary dark:border-dark-secondary">
               <h3 className="text-sm font-medium text-light-text-primary dark:text-dark-text-primary">
-                Drawing Tools
+                Map Layers
               </h3>
             </div>
-            <div className="p-3 space-y-3">
-              <div className="flex items-center justify-between">
-                <label className="text-sm text-light-text-secondary dark:text-dark-text-secondary flex items-center py-2">
-                  <input
-                    type="checkbox"
-                    checked={drawingMode}
-                    onChange={() => setDrawingMode(!drawingMode)}
-                    className="mr-2  h-5 w-5 text-light-accent dark:text-dark-accent focus:ring-light-accent dark:focus:ring-dark-accent rounded border-light-secondary dark:border-dark-secondary"
-                  />
-                  Drawing Mode
-                </label>
-
-                {drawingMode && (
-                  <button
-                    onClick={handleFinishPolygon}
-                    className="py-2 px-3 bg-light-accent dark:bg-dark-accent hover:bg-light-accent/90 dark:hover:bg-dark-accent/90 text-light-text-inverted dark:text-dark-text-inverted text-sm font-medium rounded transition duration-150 disabled:opacity-50"
-                    disabled={currentPolygonCoords.length < 3}
-                  >
-                    Finish Polygon
-                  </button>
-                )}
-              </div>
-
-
-              <button
-                onClick={fetchLocationMappings}
-                className="py-2 px-3 bg-light-tertiary dark:bg-dark-primary border border-light-secondary dark:border-dark-secondary hover:bg-light-secondary/50 dark:hover:bg-dark-secondary/50 text-light-text-primary dark:text-dark-text-primary text-sm font-medium rounded transition duration-150"
-              >
-                Fetch Location Mappings From GEE
-              </button>
+            <div className="p-3 space-y-2">
+              {layerConfig.map((layer, index) => (
+                <LayerCheckbox
+                  key={index}
+                  label={layer.label}
+                  checked={layer.state}
+                  onChange={() => layer.setState(!layer.state)}
+                />
+              ))}
             </div>
-          )}
-          <div className="px-4 py-2 bg-light-primary dark:bg-dark-primary bg-opacity-80 rounded-lg">
-            <ToggleSwitch
-              label="Flood Mapping"
-              checked={showFloodMappingOverlay}
-              onChange={() =>
-                setShowFloodMappingOverlay(!showFloodMappingOverlay)
-              }
-              checkboxClass="h-4 w-4 text-light-accent dark:text-dark-accent"
-              labelClass="text-light-accent dark:text-dark-accent font-medium"
-            />
           </div>
-          <div className="px-4 py-2 bg-light-primary dark:bg-dark-primary bg-opacity-80 rounded-lg">
-            <ToggleSwitch
-              label="Contour Lines"
-              checked={showContourLinesOverlay}
-              onChange={() =>
-                setShowContourLinesOverlay(!showContourLinesOverlay)
-              }
-              checkboxClass="h-4 w-4 text-light-accent dark:text-dark-accent"
-              labelClass="text-light-accent dark:text-dark-accent font-medium"
-            />
+          <button className='text-sm font-medium rounded-sm p-2 '>
+            Clear Rescue Markers
+          </button>
+        </div>
+      </div>
+
+      <div className="absolute top-72 left-4 z-10">
+        <div className="bg-light-tertiary dark:bg-dark-primary shadow-md rounded-md overflow-hidden border border-light-secondary dark:border-dark-secondary">
+          <div className="p-3 bg-light-secondary dark:bg-dark-secondary border-b border-light-secondary dark:border-dark-secondary">
+            <h3 className="text-sm font-medium text-light-text-primary dark:text-dark-text-primary">
+              Drawing Tools
+            </h3>
+          </div>
+          <div className="p-3 space-y-3 flex flex-col">
+            <div className="flex items-center justify-between">
+              <label className="text-sm text-light-text-secondary dark:text-dark-text-secondary flex items-center py-2">
+                <input
+                  type="checkbox"
+                  checked={drawingMode}
+                  onChange={() => setDrawingMode(!drawingMode)}
+                  className="mr-2  h-5 w-5 text-light-accent dark:text-dark-accent focus:ring-light-accent dark:focus:ring-dark-accent rounded border-light-secondary dark:border-dark-secondary"
+                />
+                Drawing Mode
+              </label>
+              {drawingMode && (
+                <button
+                  onClick={handleFinishPolygon}
+                  className="py-2 px-3 bg-light-accent dark:bg-dark-accent hover:bg-light-accent/90 dark:hover:bg-dark-accent/90 text-light-text-inverted dark:text-dark-text-inverted text-sm font-medium rounded transition duration-150 disabled:opacity-50"
+                  disabled={currentPolygonCoords.length < 3}
+                >
+                  Finish Polygon
+                </button>
+              )}
+            </div>
+
+            <button
+              onClick={fetchLocationMappings}
+              className="py-2 px-3 bg-light-tertiary dark:bg-dark-primary border border-light-secondary dark:border-dark-secondary hover:bg-light-secondary/50 dark:hover:bg-dark-secondary/50 text-light-text-primary dark:text-dark-text-primary text-sm font-medium rounded transition duration-150"
+            >
+              Fetch Location Mappings From GEE
+            </button>
+
+            <button
+              // onClick={fetchLocationMappings}
+              onClick={() => handleFetchContourLines(polygons[0])}
+              className="py-2 px-3 bg-light-accent dark:bg-dark-accent hover:bg-light-accent/90 dark:hover:bg-dark-accent/90 text-light-text-inverted dark:text-dark-text-inverted text-sm font-medium rounded transition duration-150 disabled:opacity-50"
+            >
+              Fetch Contor Lines
+            </button>
           </div>
         </div>
       </div>
-            </div>
-          </div>
-        </div>
 
-      <div className="absolute top-0 right-0 m-2 z-10">
-        <button
-          // onClick={fetchLocationMappings}
-          onClick={handleFetchContourLines}
-          className="px-4 py-2 bg-light-primary dark:bg-dark-primary bg-opacity-80 rounded-lg text-light-text-inverted dark:text-dark-text-inverted"
-        >
-          Fetch Location Mappings
-        </button>
+      <div className="px-4 py-2 bg-light-primary dark:bg-dark-primary bg-opacity-80 rounded-lg">
+        <ToggleSwitch
+          label="Flood Mapping"
+          checked={showFloodMappingOverlay}
+          onChange={() =>
+            setShowFloodMappingOverlay(!showFloodMappingOverlay)
+          }
+          checkboxClass="h-4 w-4 text-light-accent dark:text-dark-accent"
+          labelClass="text-light-accent dark:text-dark-accent font-medium"
+        />
       </div>
+      <div className="px-4 py-2 bg-light-primary dark:bg-dark-primary bg-opacity-80 rounded-lg">
+        <ToggleSwitch
+          label="Contour Lines"
+          checked={showContourLinesOverlay}
+          onChange={() =>
+            setShowContourLinesOverlay(!showContourLinesOverlay)
+          }
+          checkboxClass="h-4 w-4 text-light-accent dark:text-dark-accent"
+          labelClass="text-light-accent dark:text-dark-accent font-medium"
+        />
+      </div>
+
 
       <PolygonList
         polygons={polygons}
         togglePolygonVisibility={togglePolygonVisibility}
         deletePolygon={deletePolygon}
-        // handlePolygonRequest={handlePolygonRequest}
         handlePolygonRequest={handleFetchContourLines}
         handleFetchContourLines={handleFetchContourLines} // Ensure proper prop name
         handleContourRequest={fetchCountourMappings}
       />
-        <div className="fixed bottom-15 left-4 max-w-xl z-10">
-          <div className="bg-light-tertiary dark:bg-dark-primary shadow-lg rounded-md max-h-50 border border-light-secondary dark:border-dark-secondary">
-            <div className="p-3 bg-light-secondary dark:bg-dark-secondary border-b border-light-secondary dark:border-dark-secondary overflow-hidden">
-              <h3 className="text-sm font-medium text-light-text-primary dark:text-dark-text-primary">
-                Drawn Polygons
-              </h3>
-            </div>
-            <div className="p-2 overflow-y-auto custom-scrollbar">
-              <PolygonList
-                polygons={polygons}
-                togglePolygonVisibility={togglePolygonVisibility}
-                deletePolygon={deletePolygon}
-                handlePolygonRequest={handlePolygonRequest}
-                handleFetchContourLines={handleFetchContourLines}
-              />
-            </div>
+      <div className="fixed bottom-15 left-4 max-w-xl z-10">
+        <div className="bg-light-tertiary dark:bg-dark-primary shadow-lg rounded-md max-h-50 border border-light-secondary dark:border-dark-secondary">
+          <div className="p-3 bg-light-secondary dark:bg-dark-secondary border-b border-light-secondary dark:border-dark-secondary overflow-hidden">
+            <h3 className="text-sm font-medium text-light-text-primary dark:text-dark-text-primary">
+              Drawn Polygons
+            </h3>
+          </div>
+          <div className="p-2 overflow-y-auto custom-scrollbar">
+            <PolygonList
+              polygons={polygons}
+              togglePolygonVisibility={togglePolygonVisibility}
+              deletePolygon={deletePolygon}
+              handlePolygonRequest={handlePolygonRequest}
+              handleFetchContourLines={handleFetchContourLines}
+            />
           </div>
         </div>
-      </>
+      </div>
 
-
-    </div>
+    </div >
   ) : (
     <div className="flex items-center justify-center h-full w-full bg-light-tertiary dark:bg-dark-tertiary">
       <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-light-accent dark:border-dark-accent">
