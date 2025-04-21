@@ -1,16 +1,17 @@
 import React, { Suspense, lazy } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { ErrorBoundary } from "react-error-boundary";
 import routes from "@/routes";
 
-const ErrorFallBack = lazy(() => import("@/components/ErrorFallBack"));
+import { SnackbarProvider } from "@/context/snackBarContext";
 
 const router = createBrowserRouter(routes);
 
 function App() {
 
   return (
-    <RouterProvider router={router} />
+    <SnackbarProvider>
+      <RouterProvider router={router} />
+    </SnackbarProvider>
   );
 }
 

@@ -4,27 +4,75 @@
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 @theme {
-    /* Light Theme */
-    --color-light-primary: oklch(0.35 0.02 270);
-    --color-light-secondary: oklch(0.65 0.03 250);
-    --color-light-tertiary: oklch(0.90 0.01 220);
-    --color-light-text-primary: oklch(0.15 0.02 260);
-    --color-light-text-secondary: oklch(0.40 0.01 250);
-    --color-light-text-tertiary: oklch(0.65 0.01 240);
-    --color-light-text-inverted: oklch(0.98 0.01 260);
-    --color-light-accent: oklch(0.70 0.12 280);
-    --color-light-shadow: oklch(0.15 0.01 260 / 0.1);
+    /* Light Theme - Emergency Professional */
+    --color-light-primary: #5A5764;
+    /* Deep navy blue for authority */
+    --color-light-secondary: #A5A3AA;
+    /* Calming medium blue */
+    --color-light-tertiary: #F5F5F5;
+    /* Crisp light gray */
+    --color-light-text-primary: #28262D;
+    /* High contrast dark navy */
+    --color-light-text-secondary: #646269;
+    /* Medium gray-blue */
+    --color-light-text-tertiary: #A5A4A8;
+    /* Soft gray for subtle text */
+    --color-light-text-inverted: #FAF9FB;
+    /* Pure white with blue tint */
+    --color-light-accent: #FFAD5A;
+    /* Vibrant accent for attention */
+    --color-light-shadow: #5A576414;
+    /* Subtle dark shadow with 8% opacity */
 
-    /* Dark Theme */
-    --color-dark-primary: oklch(0.15 0.02 270);
-    --color-dark-secondary: oklch(0.30 0.02 250);
-    --color-dark-tertiary: oklch(0.45 0.01 220);
-    --color-dark-text-primary: oklch(0.90 0.02 260);
-    --color-dark-text-secondary: oklch(0.70 0.01 250);
-    --color-dark-text-tertiary: oklch(0.50 0.01 240);
-    --color-dark-text-inverted: oklch(0.12 0.01 260);
-    --color-dark-accent: oklch(0.75 0.18 280);
-    --color-dark-shadow: oklch(0.98 0.01 260 / 0.15);
+    /* Dark Theme - Crisis Night Mode */
+    --color-dark-primary: #191919;
+    /* Matte black with blue undertone */
+    --color-dark-secondary: #2B2B2B;
+    /* Dark slate gray */
+    --color-dark-tertiary: #735F32;
+    /* Medium operational gray */
+    --color-dark-text-primary: #F5F5FA;
+    /* Soft white for readability */
+    --color-dark-text-secondary: #B2B2B6;
+    /* Medium gray for less emphasis */
+    --color-dark-text-tertiary: #808082;
+    /* Dim gray for disabled states */
+    --color-dark-text-inverted: #1E1E23;
+    /* Deep black for contrast */
+    --color-dark-accent: #C69749;
+    /* Bright emergency orange-red */
+    --color-dark-shadow: #FAFAFF33;
+    /* Stronger shadows for depth with 20% opacity */
+
+
+    --animate-pulse: pulse 2s ease-in-out infinite;
+
+    @keyframes pulse {
+        0% {
+            transform: translate(-50%, -50%) scale(0.8);
+            opacity: 0.9;
+        }
+
+        20% {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 0.85;
+        }
+
+        50% {
+            transform: translate(-50%, -50%) scale(1.5);
+            opacity: 0.65;
+        }
+
+        70% {
+            transform: translate(-50%, -50%) scale(1.8);
+            opacity: 0.4;
+        }
+
+        100% {
+            transform: translate(-50%, -50%) scale(2);
+            opacity: 0;
+        }
+    }
 }
 
 
@@ -32,4 +80,32 @@ body {
     font-family: 'Roboto', sans-serif;
 }
 
+/* For Firefox */
+.custom-scrollbar {
+    scrollbar-width: thin;
+    /* Sets thumb and track colors in Firefox */
+    scrollbar-color: var(--color-dark-secondary) transparent;
+}
 
+/* For WebKit browsers (Chrome, Safari, Edge) */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 3px;
+    /* Thin scrollbar */
+    height: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 1px white;
+    border-radius: 10px;
+    background: var(--color-dark-primary);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--color-dark-secondary);
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--color-dark-secondary);
+    /* You can change this to another hover color if desired */
+}
