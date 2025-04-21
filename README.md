@@ -1,5 +1,8 @@
 # EmergeSense : AI-Based Disaster Response System
 
+## Video Demonstration
+[Click here to watch the video demonstration](https://drive.google.com/file/d/1Veqk1EN-VPqluExcPH0QRofOuf7CrgO7/view?usp=sharing)
+
 ## Overview
 The **AI-Based Disaster Response System** is an advanced platform designed to aid **disaster management agencies in monitoring, detecting, and responding to natural calamities in real-time**. By integrating data from multiple sources, including social media platforms, satellite imagery, and climate data, the system leverages AI-driven analytics to identify affected regions and generate effective, coordinated response strategies.
 
