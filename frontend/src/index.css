@@ -109,3 +109,18 @@ body {
     background: var(--color-dark-secondary);
     /* You can change this to another hover color if desired */
 }
+
+/* Hide scrollbar but keep scroll functionality */
+.no-scrollbar {
+    overflow: auto;
+    /* enable scrolling */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+/* Chrome, Safari, Opera */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}

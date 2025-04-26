@@ -511,6 +511,7 @@ function MapContainer({
         handleFetchContourLines={handleFetchContourLines} // Ensure proper prop name
         handleContourRequest={fetchCountourMappings}
       />
+      
       <div className="fixed bottom-15 left-4 max-w-xl z-10">
         <div className="bg-light-tertiary dark:bg-dark-primary shadow-lg rounded-md max-h-50 border border-light-secondary dark:border-dark-secondary">
           <div className="p-3 bg-light-secondary dark:bg-dark-secondary border-b border-light-secondary dark:border-dark-secondary overflow-hidden">
