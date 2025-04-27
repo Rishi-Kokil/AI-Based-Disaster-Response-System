@@ -124,3 +124,19 @@ body {
 .no-scrollbar::-webkit-scrollbar {
     display: none;
 }
+
+Add these custom styles to your global CSS file .text-shadow-lg {
+    text-shadow: 0 0 8px rgba(0, 0, 0, 0.25), 0 0 1px rgba(0, 0, 0, 0.5);
+}
+
+.text-shadow-sm {
+    text-shadow: 0 0 4px rgba(0, 0, 0, 0.2), 0 0 1px rgba(0, 0, 0, 0.3);
+}
+
+.dark .text-shadow-lg {
+    text-shadow: 0 0 8px rgba(0, 0, 0, 0.5), 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+.dark .text-shadow-sm {
+    text-shadow: 0 0 4px rgba(0, 0, 0, 0.4), 0 0 1px rgba(255, 255, 255, 0.1);
+}

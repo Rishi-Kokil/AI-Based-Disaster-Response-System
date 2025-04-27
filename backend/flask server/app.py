@@ -268,12 +268,23 @@
 from flask import Flask, request, jsonify
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from PIL import Image
+import base64
 import os
+from io import BytesIO 
+import moondream as md
 from langchain_google_genai import ChatGoogleGenerativeAI
 from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
+
+# Initialize Moondream API key
+MOONDREAM_API_KEY = os.getenv("MOONDREAM_API_KEY")
+if not MOONDREAM_API_KEY:
+    raise ValueError("MOONDREAM_API_KEY is not set in the .env file")
+
+# Initialize Moondream model
+moondream_model = md.vl(api_key=MOONDREAM_API_KEY)
 
 # Initialize Gemini model
 llm = ChatGoogleGenerativeAI(
@@ -283,6 +294,8 @@ llm = ChatGoogleGenerativeAI(
     timeout=None,
     max_retries=2,
 )
+
+PREDEFINED_QUERY = "Describe this image in detail"
 
 def get_disaster_prompt():
     return (
@@ -297,7 +310,7 @@ def get_disaster_prompt():
 
 def handle_gemini_call(description):
     system_message = get_disaster_prompt()
-    
+
     messages = [
         ("system", system_message),
         ("human", f"Classify the following AI-generated disaster description as either 'severe disaster' or 'moderate disaster': {description}"),
@@ -306,42 +319,34 @@ def handle_gemini_call(description):
     ai_msg = llm.invoke(messages)
     return ai_msg.content
 
-
 app = Flask(__name__)
 
-# =================== Directly Load Model from Hugging Face ===================
-
-model = AutoModelForCausalLM.from_pretrained(
-    "vikhyatk/moondream2",
-    revision="2025-04-14",
-    trust_remote_code=True,
-    # device_map={"": "cuda"}  # Uncomment if you want to use GPU
-)
-
-# (Optional) Load tokenizer if needed (not used in this code, but for completeness)
-tokenizer = AutoTokenizer.from_pretrained(
-    "vikhyatk/moondream2",
-    revision="2025-04-14",
-)
-
-# ==============================================================================
-
-# Routes
 @app.route('/process-image', methods=['POST'])
 def process_image():
     if 'image' not in request.files:
         print("Image not found in request")
         return jsonify({'error': 'No image provided'}), 400
 
-    image = Image.open(request.files['image'])
-    
     try:
-        # Generate image description using the model
-        description = model.caption(image, length="normal")["caption"]
+        # Load the image
+        image = Image.open(request.files['image'])
 
+        # Call Moondream API using their SDK
+        result = moondream_model.query(image, PREDEFINED_QUERY)
+
+        description = result.get("answer", "No description provided")
+        if not description:
+            print("No description returned from Moondream")
+            return jsonify({'error': 'No description returned from Moondream'}), 500
+        
+        print(f"Moondream description: {description}")
         # Call Gemini to predict severity
         severity = handle_gemini_call(description)
-
+        if not severity:
+            print("No severity returned from Gemini")
+            return jsonify({'error': 'No severity returned from Gemini'}), 500
+        
+        print(f"Gemini severity: {severity}")
         return jsonify({
             'description': description,
             'severity': severity

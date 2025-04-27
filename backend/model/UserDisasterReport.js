@@ -1,20 +1,40 @@
 import mongoose from 'mongoose';
 
-const userDisasterReportSchema = new mongoose.Schema({
-    user_session_id: { 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'User', 
-        required: true 
+const disasterReportSchema = new mongoose.Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     },
-    report_type: { 
+    type: {
+        type: String,
+        enum: ['image', 'audio'],
+        required: true
+    },
+    fileData: {
         type: String, 
-        enum: ['audio', 'video', 'text'], 
-        required: true 
+        required: true
     },
-    description: { type: String },
-    ai_analysis_result: { type: String },
-    location_details: { type: String, required: true },
-    created_at: { type: Date, default: Date.now },
+    location: {
+        latitude: Number,
+        longitude: Number
+    },
+    uploadedAt: {
+        type: Date,
+        default: Date.now
+    },
+    description: {
+        type: String
+    },
+    severity: {
+        type: String,
+        required: function () { return this.type === 'image'; }
+    },
+    transcript: {
+        type: String,
+        required: function () { return this.type === 'audio'; }
+    }
 });
 
-export const UserDisasterReport = mongoose.model('UserDisasterReport', userDisasterReportSchema);
+export const UserDisasterReport = mongoose.model('UserDisasterReport', disasterReportSchema);
+
