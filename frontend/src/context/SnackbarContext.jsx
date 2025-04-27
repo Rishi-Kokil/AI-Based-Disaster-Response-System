@@ -21,7 +21,7 @@ import React, {
     // Create a new snack (notification).
     const showSnackbar = useCallback((message, options = {}) => {
       const newSnack = {
-        id: idCounter++, // Unique id
+        id: idCounter++,
         message,
         type: options.type || 'info',
         autoHideDuration: options.autoHideDuration ?? 5000,

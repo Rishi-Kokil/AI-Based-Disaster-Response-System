@@ -71,6 +71,22 @@ const userController = {
         return res.json({ success: true, description, severity, data: user });
       }
 
+       // Step 2: Now send POST to '/user/upload-disaster-report'
+      const formToNode = new FormData();
+      formToNode.append('file', fs.createReadStream(imagePath));
+      formToNode.append('type', 'image');
+      formToNode.append('latitude', latitude);
+      formToNode.append('longitude', longitude);
+      formToNode.append('description', description);
+      formToNode.append('severity', severity);
+
+      const nodeResponse = await axios.post('http://127.0.0.1:3000/user/upload-disaster-report', formToNode, {
+        headers: {
+          ...formToNode.getHeaders(),
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
       // Save upload to user's uploads array
       user.uploads.push({
         type: 'image',
@@ -178,8 +194,8 @@ const userController = {
       }
       const userId = decoded._id;
   
-      // 2) Grab form data and file (express‐formidable)
-      const { type, description, severity, transcript, latitude, longitude } = req.fields;
+      // 2) Grab form data and file (express-formidable)
+      const { type, latitude, longitude } = req.fields;
       const file = req.files?.file;
       if (!file) {
         return res.status(400).json({ message: 'No file uploaded' });
@@ -195,10 +211,45 @@ const userController = {
         return res.status(400).json({ message: 'File too large (max 5 MB)' });
       }
   
-      // 4) Convert file to Base64
+      let description;
+      let severity;
+      let transcript;
+  
+      // 4) If image → call Flask server to get description and severity
+      if (type === 'image') {
+        const form = new FormData();
+        form.append('image', fs.createReadStream(file.path));
+  
+        const flaskResponse = await axios.post('http://127.0.0.1:5000/process-image', form, {
+          headers: form.getHeaders(),
+        });
+  
+        ({ description, severity } = flaskResponse.data);
+  
+        if (!severity || severity === 'Not a Natural Disaster') {
+          // Clean up temp file
+          fs.unlink(file.path, () => {});
+          return res.status(200).json({
+            success: true,
+            message: 'Image processed but not a natural disaster',
+            description,
+            severity,
+          });
+        }
+      } 
+      // 5) If audio → you might later add audio processing here (optional)
+      else if (type === 'audio') {
+        transcript = req.fields.transcript;
+        if (!transcript) {
+          fs.unlink(file.path, () => {});
+          return res.status(400).json({ message: 'Transcript is required for audio' });
+        }
+      }
+  
+      // 6) Convert file to Base64
       const fileData = fs.readFileSync(file.path, 'base64');
   
-      // 5) Build location object (if provided)
+      // 7) Build location object (if provided)
       const location = {};
       if (latitude != null && longitude != null) {
         const lat = parseFloat(latitude);
@@ -209,43 +260,37 @@ const userController = {
         }
       }
   
-      // 6) Build and validate report document
+      // 8) Build and validate report document
       const reportFields = {
         user: userId,
         type,
         fileData,
-        description: description || undefined,
-        location: Object.keys(location).length ? location : undefined
+        location: Object.keys(location).length ? location : undefined,
       };
+  
       if (type === 'image') {
-        if (!severity) {
-          fs.unlink(file.path, () => {});
-          return res.status(400).json({ message: 'Severity is required for images' });
-        }
+        reportFields.description = description;
         reportFields.severity = severity;
-      } else { // audio
-        if (!transcript) {
-          fs.unlink(file.path, () => {});
-          return res.status(400).json({ message: 'Transcript is required for audio' });
-        }
+      } else {
         reportFields.transcript = transcript;
       }
   
-      // 7) Save to MongoDB
+      // 9) Save to MongoDB
       const report = new UserDisasterReport(reportFields);
       await report.save();
   
-      // 8) Clean up temp file
+      // 10) Clean up temp file
       fs.unlink(file.path, () => {});
   
-      // 9) Respond
+      // 11) Respond
       return res
         .status(201)
         .json({ success: true, message: 'Disaster report uploaded', report });
     } catch (err) {
-      return next(err);
+      next(err);
     }
   }
+  
   
   
 };

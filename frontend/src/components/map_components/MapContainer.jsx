@@ -1,44 +1,29 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useRef, useEffect, useContext } from 'react';
 import { GoogleMap, Marker, Polygon, Polyline, InfoWindow, GroundOverlay, useJsApiLoader, OverlayView } from '@react-google-maps/api';
 import axios from 'axios';
 import PolygonList from './PolygonList';
 import LayerCheckbox from './LayerCheckBox';
 import RescueMarker from './RescueMarker';
 import ToggleSwitch from './ToggleSwitch';
-const initialCenter = { lat: -6.30, lng: 106.80 };
+import DisasterReportMarker from './DisasterReportMarker';
+import { SnackbarContext } from '@/context'
+
 const GAS_ICON_URL = "https://cdn-icons-png.flaticon.com/512/5193/5193677.png";
 const HOSPITAL_ICON_URL = "https://cdn-icons-png.flaticon.com/512/7928/7928713.png";
 
-function MapContainer({
-  rescueMarkers,
-  setRescueMarkers,
-}) {
-  const mapStyles = [
-    { featureType: 'all', elementType: 'labels', stylers: [{ visibility: 'off' }] },
-    { featureType: 'road', elementType: 'geometry', stylers: [{ visibility: 'on' }] },
-    { featureType: 'poi.medical', elementType: 'geometry', stylers: [{ visibility: 'on' }] },
-    { featureType: 'poi.gas_station', elementType: 'geometry', stylers: [{ visibility: 'on' }] },
-    { featureType: 'administrative', elementType: 'labels', stylers: [{ visibility: 'on' }] },
-    { featureType: 'road', elementType: 'labels', stylers: [{ visibility: 'on' }] }
-  ];
+function MapContainer({ rescueMarkers, setRescueMarkers, }) {
 
-  const { isLoaded } = useJsApiLoader({
-    id: 'google-map-script',
-    googleMapsApiKey: 'AIzaSyBzHWL78g-ZvWNYE3Bki8oi31Y-35ZwTZY',
-    libraries: ['places'],
-  });
-
+  // State variables
   const [map, setMap] = useState(null);
   const mapRef = useRef(null);
 
+  const [center, setCenter] = useState({ lat: -6.30, lng: 106.80 });
   const [gasStations, setGasStations] = useState([]);
   const [hospitals, setHospitals] = useState([]);
   const [showRescueMarkers, setShowRescueMarkers] = useState(true);
 
   const [showGasStations, setShowGasStations] = useState(true);
   const [showHospitals, setShowHospitals] = useState(true);
-  const [locationMappings, setLocationMappings] = useState([]);
-  const [showLocationMappings, setShowLocationMappings] = useState(false);
 
   const [drawingMode, setDrawingMode] = useState(false);
   const [currentPolygonCoords, setCurrentPolygonCoords] = useState([]);
@@ -53,33 +38,10 @@ function MapContainer({
   const [activeMarker, setActiveMarker] = useState(null);
   const [showingInfoWindow, setShowingInfoWindow] = useState(false);
 
-  const [isContourLoading, setIsContourLoading] = useState(false);
+  const [selectedPolygonId, setSelectedPolygonId] = useState(null);
+  const [disasterReports, setDisasterReports] = useState([]);
 
-  useEffect(() => {
-    return () => {
-      setContourLinesOverlay(null);
-      setShowContourLinesOverlay(false);
-    };
-  }, []);
-
-  const fetchCountourMappings = async (polygon) => {
-    try {
-      const response = await axios.post('http://localhost:3000/agency/fetch-contour-image', {
-        geometry: polygon,
-      });
-
-      if (Array.isArray(response.data)) {
-        setLocationMappings(response.data);
-        setShowLocationMappings(true);
-      } else {
-        console.error('Unexpected response format:', response.data);
-      }
-    } catch (error) {
-      console.error('Error fetching location mappings:', error);
-      throw error;
-    }
-  };
-
+  // Configurations
   const layerConfig = [
     { label: 'Gas Stations', state: showGasStations, setState: setShowGasStations },
     { label: 'Hospitals', state: showHospitals, setState: setShowHospitals },
@@ -88,30 +50,72 @@ function MapContainer({
     { label: 'Rescue Points', state: showRescueMarkers, setState: setShowRescueMarkers },
   ];
 
-  const handleFetchContourLines = async (polygon) => {
-    
-    if (!polygon?.coords || polygon.coords.length < 3) {
-      alert('Please draw and select a valid polygon first');
+  const { showSnackbar } = useContext(SnackbarContext)
+
+  const { isLoaded } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: 'AIzaSyBzHWL78g-ZvWNYE3Bki8oi31Y-35ZwTZY',
+    libraries: ['places'],
+  });
+
+
+  // Use Effects
+  useEffect(() => {
+    return () => {
+      setContourLinesOverlay(null);
+      setShowContourLinesOverlay(false);
+    };
+  }, []);
+
+  // Clear the ongoing polygon coordinates when the drawing mode is disabled
+  useEffect(() => {
+    if (!drawingMode && currentPolygonCoords.length) {
+      setCurrentPolygonCoords([])
+    }
+  }, [drawingMode, currentPolygonCoords.length, setCurrentPolygonCoords])
+
+  // Callback functions
+
+  // Fetches the list of disaster reports from the server
+  const handleFetchDisasterReports = useCallback(async () => {
+    try {
+      const { data: { data: reports } } = await axios.get('http://localhost:3000/agency/reports')
+      setDisasterReports(reports)
+      showSnackbar('Disaster reports fetched successfully', { type: 'success' })
+    } catch (error) {
+      showSnackbar(`Error fetching disaster reports ${error}`, { type: 'error' })
+    }
+  }, [setDisasterReports, showSnackbar])
+
+  // Fetch and display contour lines for a polygon
+  const handleFetchContourLines = useCallback(async () => {
+    const polygon = polygons.find(poly => poly.id === selectedPolygonId);
+
+    if (!polygon) {
+      showSnackbar('No polygon selected. Please select a polygon first.', { type: 'error' });
+      return;
+    }
+
+    if (polygon.coords.length < 3) {
+      showSnackbar('Selected polygon is invalid (requires at least 3 points)', { type: 'error' });
       return;
     }
 
     try {
-      setIsContourLoading(true);
-      const response = await axios.post('http://localhost:3000/agency/fetch-contour-lines', {
-        geometry: polygon,
-      });
+      const { data: { contourLineUrl } } = await axios.post(
+        'http://localhost:3000/agency/fetch-contour-lines',
+        { geometry: polygon }
+      );
 
-      if (!response.data.contourLineUrl) {
-        throw new Error('No contour data received');
-      }
+      if (!contourLineUrl) throw new Error('Contour data URL not provided');
 
-      // Fix 3: Convert coordinates properly
-      const coords = polygon.coords;
       const bounds = new window.google.maps.LatLngBounds();
-      coords.forEach(coord => bounds.extend(new window.google.maps.LatLng(coord.lat, coord.lng)));
+      polygon.coords.forEach(({ lat, lng }) =>
+        bounds.extend(new window.google.maps.LatLng(lat, lng))
+      );
 
       setContourLinesOverlay({
-        url: response.data.contourLineUrl,
+        url: contourLineUrl,
         bounds: {
           north: bounds.getNorthEast().lat(),
           south: bounds.getSouthWest().lat(),
@@ -119,65 +123,36 @@ function MapContainer({
           west: bounds.getSouthWest().lng(),
         }
       });
-
-      setContourLinesOverlay({ url: contourLineUrl, bounds });
       setShowContourLinesOverlay(true);
+      showSnackbar('Contour lines generated successfully', { type: 'success' });
     } catch (error) {
-      console.error('Contour error:', error);
-      alert(`Contour Error: ${error.message || 'Failed to generate contours'}`);
-    } finally {
-      setIsContourLoading(false);
+      showSnackbar(`Contour Error: ${error.message || 'Failed to generate contours'}`, { type: 'error' });
     }
-  };
+  }, [polygons, selectedPolygonId, setContourLinesOverlay, setShowContourLinesOverlay, showSnackbar]);
 
-  const handleProcessImage = async () => {
-    setIsProcessing(true);
-    try {
-      const mapElement = document.querySelector('.google-map-container');
-      const canvas = await html2canvas(mapElement);
-      const imageData = canvas.toDataURL('image/png').split(',')[1];
+  // Handle marker click: select place, center map, and show info window
+  const onMarkerClick = useCallback(place => {
+    setSelectedPlace(place)
+    setActiveMarker({ lat: place.geometry?.location.lat(), lng: place.geometry?.location.lng() })
+    setShowingInfoWindow(true)
+  }, [setSelectedPlace, setActiveMarker, setShowingInfoWindow])
 
-      const response = await axios.post('http://localhost:5000/process-image', {
-        image: imageData
-      });
 
-      setProcessedImage(response.data.processed_image);
-    } catch (error) {
-      console.error('Image processing error:', error);
-      alert('Failed to process image');
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const renderMarkers = (places, prefix, iconUrl, show) => {
-    if (!show) return null;
-    return places.map((place, index) => {
-      const pos = {
-        lat: place.geometry.location.lat(),
-        lng: place.geometry.location.lng(),
-      };
-      return (
-        <Marker
-          key={`${prefix}-${index}`}
-          position={pos}
-          icon={{ url: iconUrl, scaledSize: new window.google.maps.Size(30, 30) }}
-          onClick={() => onMarkerClick(place)}
-        />
-      );
-    });
-  };
-
-  const renderLocationMappingsMarkers = () => {
-    if (!showLocationMappings) return null;
-    return locationMappings.map((location, index) => (
+  // Renders map markers only when `show` is true
+  const renderMarkers = useCallback((places, prefix, iconUrl, show) => {
+    if (!show) return null
+    return places.map((place, idx) =>
       <Marker
-        key={`location-${index}`}
-        position={{ lat: location.lat, lng: location.lng }}
-        onClick={() => onMarkerClick(location)}
+        key={`${prefix}-${idx}`}
+        position={{
+          lat: place.geometry.location.lat(),
+          lng: place.geometry.location.lng()
+        }}
+        icon={{ url: iconUrl, scaledSize: new window.google.maps.Size(30, 30) }}
+        onClick={() => onMarkerClick(place)}
       />
-    ));
-  };
+    )
+  }, [onMarkerClick])
 
   const renderPolygons = () =>
     polygons
@@ -206,18 +181,12 @@ function MapContainer({
       />
     ) : null;
 
-  const fetchNearbyPlaces = useCallback(
-    (centerLocation, mapInstance = map) => {
-      if (!mapInstance) return;
-    }, [map]);
-
   const onLoad = useCallback(
     (mapInstance) => {
       setMap(mapInstance);
       mapRef.current = mapInstance;
-      fetchNearbyPlaces(initialCenter, mapInstance);
     },
-    [fetchNearbyPlaces]
+    []
   );
 
   const onUnmount = useCallback(() => {
@@ -225,12 +194,7 @@ function MapContainer({
     mapRef.current = null;
   }, []);
 
-  const handleIdle = () => {
-    if (map) {
-      const newCenter = map.getCenter();
-      fetchNearbyPlaces(newCenter, map);
-    }
-  };
+
 
   const handleMapClick = (e) => {
     console.log("Map clicked so the Markers List before is ", rescueMarkers);
@@ -256,78 +220,31 @@ function MapContainer({
     }
   };
 
-  const onMarkerClick = (place) => {
-    setSelectedPlace(place);
-    setActiveMarker({
-      lat: place.geometry?.location.lat(),
-      lng: place.geometry?.location.lng(),
-    });
-    setShowingInfoWindow(true);
-  };
+  // Finalize new polygon: hide all others, add this one as visible, select it, and exit draw mode
+  const handleFinishPolygon = useCallback(() => {
+    if (currentPolygonCoords.length < 3)
+      return alert('A polygon requires at least 3 points.')
 
-  const handleFinishPolygon = () => {
-    if (currentPolygonCoords.length < 3) {
-      alert('A polygon requires at least 3 points.');
-      return;
-    }
+    const polygonId = Date.now()
     setPolygons(prev => [
-      ...prev,
-      { id: Date.now(), coords: currentPolygonCoords, visible: true },
-    ]);
-    setCurrentPolygonCoords([]);
-    setDrawingMode(false);
-  };
+      ...prev.map(p => ({ ...p, visible: false })),
+      { id: polygonId, coords: currentPolygonCoords, visible: true }
+    ])
+    setCurrentPolygonCoords([])
+    setSelectedPolygonId(polygonId)
+    setDrawingMode(false)
+  }, [currentPolygonCoords, setPolygons, setCurrentPolygonCoords, setSelectedPolygonId, setDrawingMode
+  ])
 
-  const togglePolygonVisibility = (id) => {
-    setPolygons(prev =>
-      prev.map(poly => (poly.id === id ? { ...poly, visible: !poly.visible } : poly))
-    );
-  };
-
-  const deletePolygon = (id) => {
-    setPolygons(prev => prev.filter(poly => poly.id !== id));
-  };
-
-  const fetchLocationMappings = async () => {
-    try {
-      const response = await axios.get('http://localhost:3000/agency/locationMapping');
-      setLocationMappings(response.data);
-      setShowLocationMappings(true);
-    } catch (error) {
-      console.error('Error fetching location mappings:', error);
-    }
-  };
-
-  const handlePolygonRequest = async (polygon) => {
-    try {
-      const response = await axios.post('http://localhost:3000/agency/floopMapping', { geometry: polygon });
-      const { floodMapUrl } = response.data;
-
-      const lats = polygon.coords.map(c => c.lat);
-      const lngs = polygon.coords.map(c => c.lng);
-      const bounds = {
-        north: Math.max(...lats),
-        south: Math.min(...lats),
-        east: Math.max(...lngs),
-        west: Math.min(...lngs),
-      };
-      console.log("Flood Map URL: ", floodMapUrl);
-
-      setFloodMappingOverlay({ id: polygon.id, url: floodMapUrl, bounds });
-      setShowFloodMappingOverlay(true);
-    } catch (error) {
-      console.error('Error making request:', error);
-    }
-  };
+  const deletePolygon = (id) => setPolygons(prev => prev.filter(poly => poly.id !== id))
 
   return isLoaded ? (
     <div className="relative w-full h-full bg-light-tertiary dark:bg-dark-tertiary">
       <GoogleMap
-        center={initialCenter}
+        center={center}
         zoom={10}
         onLoad={onLoad}
         onUnmount={onUnmount}
-        onIdle={handleIdle}
         onClick={handleMapClick}
         mapContainerClassName="w-full h-full"
         options={{
@@ -343,7 +260,7 @@ function MapContainer({
       >
         {renderMarkers(gasStations, "gas", GAS_ICON_URL, showGasStations)}
         {renderMarkers(hospitals, "hospital", HOSPITAL_ICON_URL, showHospitals)}
-        {renderLocationMappingsMarkers()}
+
         {renderPolygons()}
         {renderDrawingPolyline()}
 
@@ -355,7 +272,7 @@ function MapContainer({
             onRemove={() => setRescueMarkers(prev => prev.filter(m => m.id !== marker.id))}
           />
         ))}
-
+        <DisasterReportMarker reports={disasterReports} />
         {showingInfoWindow && activeMarker && (
           <InfoWindow
             position={activeMarker}
@@ -407,11 +324,11 @@ function MapContainer({
         )}
       </GoogleMap>
 
-      <div className="absolute top-5 left-4 z-10">
+      <div className="absolute top-5 left-4 z-10 ">
         <div className='flex flex-col gap-2'>
           <div className="bg-light-tertiary dark:bg-dark-primary shadow-md rounded-md overflow-hidden border border-light-secondary dark:border-dark-secondary">
             <div className="p-3 bg-light-secondary dark:bg-dark-secondary border-b border-light-secondary dark:border-dark-secondary">
-              <h3 className="text-sm font-medium text-light-text-primary dark:text-dark-text-primary">
+              <h3 className="text-sm font-med ium text-light-text-primary dark:text-dark-text-primary">
                 Map Layers
               </h3>
             </div>
@@ -426,22 +343,51 @@ function MapContainer({
               ))}
             </div>
           </div>
-          <button className='text-sm font-medium rounded-sm p-2 '>
-            Clear Rescue Markers
-          </button>
+
         </div>
+
       </div>
 
-      <div className="absolute top-72 left-4 z-10">
+      <div
+        className='absolute top-5 left-44 z-10 flex gap-2 items-start wrap'
+      >
+        <button
+          onClick={() => handleFetchContourLines()}
+          className="py-2 px-3 bg-light-accent dark:bg-dark-accent hover:bg-light-accent/90 dark:hover:bg-dark-accent/90 text-light-text-inverted dark:text-dark-text-inverted text-sm font-medium rounded transition duration-150 disabled:opacity-50"
+        >
+          Fetch Contor Lines
+        </button>
+        <button
+          className=' py-2 px-3   bg-light-accent dark:bg-dark-accent   hover:bg-light-accent/90 dark:hover:bg-dark-accent/90   active:bg-light-accent/80 dark:active:bg-dark-accent/80  text-light-text-inverted dark:text-dark-text-inverted text-sm font-medium rounded transition duration-150 disabled:opacity-50'
+          onClick={() => setRescueMarkers([])}
+        >
+          Clear Rescue Markers
+        </button>
+        <button
+          className=' py-2 px-3   bg-light-accent dark:bg-dark-accent   hover:bg-light-accent/90 dark:hover:bg-dark-accent/90   active:bg-light-accent/80 dark:active:bg-dark-accent/80  text-light-text-inverted dark:text-dark-text-inverted text-sm font-medium rounded transition duration-150 disabled:opacity-50'
+          onClick={handleFetchDisasterReports}
+        >
+          Fetch Disaster Reports
+        </button>
+        <button
+          className=' py-2 px-3   bg-light-accent dark:bg-dark-accent   hover:bg-light-accent/90 dark:hover:bg-dark-accent/90   active:bg-light-accent/80 dark:active:bg-dark-accent/80  text-light-text-inverted dark:text-dark-text-inverted text-sm font-medium rounded transition duration-150 disabled:opacity-50'
+          onClick={() => showSnackbar('Flood Mapping is not available yet', { type: 'error' })}
+        >
+          Fetch Flood Mappings
+        </button>
+
+      </div>
+
+      <div className="absolute top-80  left-4 z-10">
         <div className="bg-light-tertiary dark:bg-dark-primary shadow-md rounded-md overflow-hidden border border-light-secondary dark:border-dark-secondary">
           <div className="p-3 bg-light-secondary dark:bg-dark-secondary border-b border-light-secondary dark:border-dark-secondary">
             <h3 className="text-sm font-medium text-light-text-primary dark:text-dark-text-primary">
               Drawing Tools
             </h3>
           </div>
-          <div className="p-3 space-y-3 flex flex-col">
+          <div className="p-3 space-y-3 flex flex-col ">
             <div className="flex items-center justify-between">
-              <label className="text-sm text-light-text-secondary dark:text-dark-text-secondary flex items-center py-2">
+              <label className="text-sm text-light-text-secondary dark:text-dark-text-secondary flex items-center py-2 px-2">
                 <input
                   type="checkbox"
                   checked={drawingMode}
@@ -461,20 +407,7 @@ function MapContainer({
               )}
             </div>
 
-            <button
-              onClick={fetchLocationMappings}
-              className="py-2 px-3 bg-light-tertiary dark:bg-dark-primary border border-light-secondary dark:border-dark-secondary hover:bg-light-secondary/50 dark:hover:bg-dark-secondary/50 text-light-text-primary dark:text-dark-text-primary text-sm font-medium rounded transition duration-150"
-            >
-              Fetch Location Mappings From GEE
-            </button>
 
-            <button
-              // onClick={fetchLocationMappings}
-              onClick={() => handleFetchContourLines(polygons[0])}
-              className="py-2 px-3 bg-light-accent dark:bg-dark-accent hover:bg-light-accent/90 dark:hover:bg-dark-accent/90 text-light-text-inverted dark:text-dark-text-inverted text-sm font-medium rounded transition duration-150 disabled:opacity-50"
-            >
-              Fetch Contor Lines
-            </button>
           </div>
         </div>
       </div>
@@ -503,15 +436,6 @@ function MapContainer({
       </div>
 
 
-      <PolygonList
-        polygons={polygons}
-        togglePolygonVisibility={togglePolygonVisibility}
-        deletePolygon={deletePolygon}
-        handlePolygonRequest={handleFetchContourLines}
-        handleFetchContourLines={handleFetchContourLines} // Ensure proper prop name
-        handleContourRequest={fetchCountourMappings}
-      />
-      
       <div className="fixed bottom-15 left-4 max-w-xl z-10">
         <div className="bg-light-tertiary dark:bg-dark-primary shadow-lg rounded-md max-h-50 border border-light-secondary dark:border-dark-secondary">
           <div className="p-3 bg-light-secondary dark:bg-dark-secondary border-b border-light-secondary dark:border-dark-secondary overflow-hidden">
@@ -522,10 +446,11 @@ function MapContainer({
           <div className="p-2 overflow-y-auto custom-scrollbar">
             <PolygonList
               polygons={polygons}
-              togglePolygonVisibility={togglePolygonVisibility}
               deletePolygon={deletePolygon}
-              handlePolygonRequest={handlePolygonRequest}
               handleFetchContourLines={handleFetchContourLines}
+              selectedPolygonId={selectedPolygonId}
+              setSelectedPolygonId={setSelectedPolygonId}
+              setPolygons={setPolygons}
             />
           </div>
         </div>
