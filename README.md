@@ -28,6 +28,7 @@ This project combines **deep learning models**, **Google Earth Engine**, and **r
 ### 🤖 Disaster Detection using Deep Learning
 - Employs **deep learning models** to predict affected areas based on historical disaster patterns and real-time data.
 - Custom-trained models analyze satellite and climate data for **flood detection**, **fire outbreaks**, and other disasters.
+- Detailed information about our **Earthquake Prediction Model** can be found [here](https://github.com/LaFlameX07/EmergeSense-AI-powered-Earthquake-Forecasting).
 
 ### 🌦️ Real-time Climate Data
 - Integrates **real-time climate data** from reliable weather data providers to enhance prediction accuracy.
