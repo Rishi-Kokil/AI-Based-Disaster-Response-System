@@ -1,46 +1,63 @@
 import React, { useState, useCallback, useRef, useEffect, useContext } from 'react';
-import { GoogleMap, Marker, Polygon, Polyline, InfoWindow, GroundOverlay, useJsApiLoader, OverlayView } from '@react-google-maps/api';
+import { GoogleMap, Marker, Polygon, Polyline, InfoWindow, GroundOverlay, useJsApiLoader } from '@react-google-maps/api';
 import axios from 'axios';
 import PolygonList from './PolygonList';
 import LayerCheckbox from './LayerCheckBox';
 import RescueMarker from './RescueMarker';
 import ToggleSwitch from './ToggleSwitch';
 import DisasterReportMarker from './DisasterReportMarker';
-import { SnackbarContext } from '@/context'
+import { SnackbarContext } from '@/context';
 
 const GAS_ICON_URL = "https://cdn-icons-png.flaticon.com/512/5193/5193677.png";
 const HOSPITAL_ICON_URL = "https://cdn-icons-png.flaticon.com/512/7928/7928713.png";
 
-function MapContainer({ rescueMarkers, setRescueMarkers, }) {
 
-  // State variables
+function MapContainer({ rescueMarkers, setRescueMarkers }) {
+  const [mapKey, setMapKey] = useState(0);
   const [map, setMap] = useState(null);
   const mapRef = useRef(null);
-
+  const listenerRef = useRef(null);
   const [center, setCenter] = useState({ lat: -6.30, lng: 106.80 });
-  const [gasStations, setGasStations] = useState([]);
-  const [hospitals, setHospitals] = useState([]);
+  const [zoom, setZoom] = useState(10);
+  const [gasStations] = useState([]);
+  const [hospitals] = useState([]);
   const [showRescueMarkers, setShowRescueMarkers] = useState(true);
-
   const [showGasStations, setShowGasStations] = useState(true);
   const [showHospitals, setShowHospitals] = useState(true);
-
   const [drawingMode, setDrawingMode] = useState(false);
   const [currentPolygonCoords, setCurrentPolygonCoords] = useState([]);
   const [polygons, setPolygons] = useState([]);
-
   const [floodMappingOverlay, setFloodMappingOverlay] = useState(null);
   const [showFloodMappingOverlay, setShowFloodMappingOverlay] = useState(false);
   const [contourLinesOverlay, setContourLinesOverlay] = useState(null);
   const [showContourLinesOverlay, setShowContourLinesOverlay] = useState(false);
-
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [activeMarker, setActiveMarker] = useState(null);
   const [showingInfoWindow, setShowingInfoWindow] = useState(false);
-
   const [selectedPolygonId, setSelectedPolygonId] = useState(null);
   const [disasterReports, setDisasterReports] = useState([]);
 
+  const { showSnackbar } = useContext(SnackbarContext);
+  const overlayKey = `${showFloodMappingOverlay}-${showContourLinesOverlay}`;
+
+  const { isLoaded } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: 'AIzaSyBzHWL78g-ZvWNYE3Bki8oi31Y-35ZwTZY',
+    libraries: ['places'],
+  });
+
+  // Add force re-render handlers
+  const forceMapRefresh = () => setMapKey(prev => prev + 1);
+
+  const toggleFloodOverlay = () => {
+    setShowFloodMappingOverlay(!showFloodMappingOverlay);
+    forceMapRefresh();
+  };
+
+  const toggleContourOverlay = () => {
+    setShowContourLinesOverlay(!showContourLinesOverlay);
+    forceMapRefresh();
+  };
   // Configurations
   const layerConfig = [
     { label: 'Gas Stations', state: showGasStations, setState: setShowGasStations },
@@ -49,14 +66,6 @@ function MapContainer({ rescueMarkers, setRescueMarkers, }) {
     { label: 'Contour Lines', state: showContourLinesOverlay, setState: setShowContourLinesOverlay },
     { label: 'Rescue Points', state: showRescueMarkers, setState: setShowRescueMarkers },
   ];
-
-  const { showSnackbar } = useContext(SnackbarContext)
-
-  const { isLoaded } = useJsApiLoader({
-    id: 'google-map-script',
-    googleMapsApiKey: 'AIzaSyBzHWL78g-ZvWNYE3Bki8oi31Y-35ZwTZY',
-    libraries: ['places'],
-  });
 
 
   // Use Effects
@@ -154,6 +163,52 @@ function MapContainer({ rescueMarkers, setRescueMarkers, }) {
     )
   }, [onMarkerClick])
 
+  const handleFetchFloodMapping = useCallback(async () => {
+    try {
+      // Get selected polygon
+      const polygon = polygons.find(poly => poly.id === selectedPolygonId);
+
+      if (!polygon || polygon.coords.length < 3) {
+        showSnackbar('Please select a valid polygon first', { type: 'error' });
+        return;
+      }
+
+      showSnackbar('Generating flood mapping...', { type: 'info' });
+
+      // Send request to backend
+      const { data } = await axios.post('http://localhost:3000/agency/floopMapping', {
+        geometry: {
+          id: polygon.id,
+          coords: polygon.coords
+        }
+      });
+
+      // Create bounds for the overlay
+      const bounds = new window.google.maps.LatLngBounds();
+      polygon.coords.forEach(({ lat, lng }) =>
+        bounds.extend(new window.google.maps.LatLng(lat, lng))
+      );
+
+      // Update flood mapping overlay state
+      setFloodMappingOverlay({
+        url: data.floodMapUrl,
+        bounds: {
+          north: bounds.getNorthEast().lat(),
+          south: bounds.getSouthWest().lat(),
+          east: bounds.getNorthEast().lng(),
+          west: bounds.getSouthWest().lng(),
+        }
+      });
+
+      setShowFloodMappingOverlay(true);
+      showSnackbar('Flood mapping generated successfully', { type: 'success' });
+
+    } catch (error) {
+      console.error('Flood mapping error:', error);
+      showSnackbar(`Flood mapping failed: ${error.response?.data?.error || error.message}`, { type: 'error' });
+    }
+  }, [polygons, selectedPolygonId, setFloodMappingOverlay, setShowFloodMappingOverlay, showSnackbar]);
+
   const renderPolygons = () =>
     polygons
       .filter(poly => poly.visible)
@@ -181,15 +236,27 @@ function MapContainer({ rescueMarkers, setRescueMarkers, }) {
       />
     ) : null;
 
-  const onLoad = useCallback(
-    (mapInstance) => {
-      setMap(mapInstance);
-      mapRef.current = mapInstance;
-    },
-    []
-  );
+  const onLoad = useCallback((mapInstance) => {
+    setMap(mapInstance);
+    mapRef.current = mapInstance;
+
+    // Add idle event listener to track map movements
+    listenerRef.current = window.google.maps.event.addListener(
+      mapInstance,
+      'idle',
+      () => {
+        const newCenter = mapInstance.getCenter();
+        const newZoom = mapInstance.getZoom();
+        setCenter({ lat: newCenter.lat(), lng: newCenter.lng() });
+        setZoom(newZoom);
+      }
+    );
+  }, []);
 
   const onUnmount = useCallback(() => {
+    if (listenerRef.current) {
+      window.google.maps.event.removeListener(listenerRef.current);
+    }
     setMap(null);
     mapRef.current = null;
   }, []);
@@ -241,8 +308,9 @@ function MapContainer({ rescueMarkers, setRescueMarkers, }) {
   return isLoaded ? (
     <div className="relative w-full h-full bg-light-tertiary dark:bg-dark-tertiary">
       <GoogleMap
+        key={`map-${overlayKey}-${mapKey}`}
         center={center}
-        zoom={10}
+        zoom={zoom}  // Now using zoom state
         onLoad={onLoad}
         onUnmount={onUnmount}
         onClick={handleMapClick}
@@ -308,6 +376,7 @@ function MapContainer({ rescueMarkers, setRescueMarkers, }) {
 
         {showFloodMappingOverlay && floodMappingOverlay && (
           <GroundOverlay
+            key={`flood-${floodMappingOverlay.url}`}
             url={floodMappingOverlay.url}
             bounds={floodMappingOverlay.bounds}
             options={{ opacity: 0.2 }}
@@ -316,7 +385,7 @@ function MapContainer({ rescueMarkers, setRescueMarkers, }) {
 
         {showContourLinesOverlay && contourLinesOverlay && (
           <GroundOverlay
-            key="contour-overlay"
+            key={`contour-${contourLinesOverlay.url}`}
             url={contourLinesOverlay.url}
             bounds={contourLinesOverlay.bounds}
             options={{ opacity: 0.4 }}
@@ -369,11 +438,12 @@ function MapContainer({ rescueMarkers, setRescueMarkers, }) {
         >
           Fetch Disaster Reports
         </button>
+      
         <button
-          className=' py-2 px-3   bg-light-accent dark:bg-dark-accent   hover:bg-light-accent/90 dark:hover:bg-dark-accent/90   active:bg-light-accent/80 dark:active:bg-dark-accent/80  text-light-text-inverted dark:text-dark-text-inverted text-sm font-medium rounded transition duration-150 disabled:opacity-50'
-          onClick={() => showSnackbar('Flood Mapping is not available yet', { type: 'error' })}
+          onClick={handleFetchFloodMapping}
+          className="py-2 px-3 bg-light-accent dark:bg-dark-accent hover:bg-light-accent/90 dark:hover:bg-dark-accent/90 text-light-text-inverted dark:text-dark-text-inverted text-sm font-medium rounded transition duration-150 disabled:opacity-50"
         >
-          Fetch Flood Mappings
+          Generate Flood Mapping
         </button>
 
       </div>
@@ -454,6 +524,25 @@ function MapContainer({ rescueMarkers, setRescueMarkers, }) {
             />
           </div>
         </div>
+      </div>
+
+      <div className="px-4 py-2 bg-light-primary dark:bg-dark-primary bg-opacity-80 rounded-lg">
+        <ToggleSwitch
+          label="Flood Mapping"
+          checked={showFloodMappingOverlay}
+          onChange={toggleFloodOverlay}
+          checkboxClass="h-4 w-4 text-light-accent dark:text-dark-accent"
+          labelClass="text-light-accent dark:text-dark-accent font-medium"
+        />
+      </div>
+      <div className="px-4 py-2 bg-light-primary dark:bg-dark-primary bg-opacity-80 rounded-lg">
+        <ToggleSwitch
+          label="Contour Lines"
+          checked={showContourLinesOverlay}
+          onChange={toggleContourOverlay}
+          checkboxClass="h-4 w-4 text-light-accent dark:text-dark-accent"
+          labelClass="text-light-accent dark:text-dark-accent font-medium"
+        />
       </div>
 
     </div >
