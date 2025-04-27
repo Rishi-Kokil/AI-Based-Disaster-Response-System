@@ -11,6 +11,7 @@ backend/.env
 backend/flask server/venv
 backend/node_modules
 backend/flask server/moondream_model
+backend/flask server/flood_images
 backend/privateKey.json
 backend/uploads
 backend/ee-rishikokil-eb013fb59d0f.json
