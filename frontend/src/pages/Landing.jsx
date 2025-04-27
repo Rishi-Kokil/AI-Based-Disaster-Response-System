@@ -1,9 +1,8 @@
-import React, { useCallback, useContext, lazy, Suspense, useMemo } from 'react'
+import React, { useCallback, lazy, Suspense, useMemo } from 'react'
 import { navLinks } from '@/constants/navlinks'
 import { cn } from '@/lib/utils'
 import Button from '@/components/Button'
 import { useNavigate } from 'react-router'
-import { SnackbarContext } from '@/context'
 
 const LazyWorldMap = lazy(() => import('@/components/ui/world-map'))
 
@@ -28,7 +27,6 @@ const DOTS_DATA = [
 
 function Landing() {
   const navigate = useNavigate()
-  const { showSnackbar } = useContext(SnackbarContext)
   const dots = useMemo(() => DOTS_DATA, [])
 
   const handleLogin = useCallback(() => navigate('/auth/login'), [])
