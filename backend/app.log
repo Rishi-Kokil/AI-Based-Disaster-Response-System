@@ -700,3 +700,11 @@
 2025-04-25 11:33:21 [INFO]: Initializing Earth Engine
 2025-04-25 11:33:21 [DEBUG]: Earth Engine authentication successful
 2025-04-25 11:33:23 [INFO]: Earth Engine initialized
+2025-04-27 14:14:53 [INFO]: Initializing Copernicus service
+2025-04-27 14:14:53 [INFO]: Initializing Earth Engine
+2025-04-27 14:14:53 [DEBUG]: Earth Engine authentication successful
+2025-04-27 14:14:55 [INFO]: Earth Engine initialized
+2025-04-27 15:45:45 [INFO]: Initializing Copernicus service
+2025-04-27 15:45:45 [INFO]: Initializing Earth Engine
+2025-04-27 15:45:45 [DEBUG]: Earth Engine authentication successful
+2025-04-27 15:45:46 [INFO]: Earth Engine initialized
